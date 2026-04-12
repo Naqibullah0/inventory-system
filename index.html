@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>اجناس سیستم</title>
+
+<style>
+body {font-family:Arial;background:#f0f2f5;padding:20px;}
+.box {background:white;padding:15px;margin-bottom:20px;border-radius:10px;}
+input,select {padding:5px;margin:3px;width:130px;}
+button {padding:6px 12px;background:#007bff;color:white;border:none;}
+table {width:100%;border-collapse:collapse;}
+th,td {border:1px solid #ccc;padding:5px;font-size:12px;}
+th {background:#007bff;color:white;}
+</style>
+
+</head>
+
+<body>
+
+<div id="loginBox" class="box">
+<h3>Login</h3>
+<input type="password" id="pass" onkeydown="if(event.key==='Enter') login()">
+<button onclick="login()">داخل شه</button>
+</div>
+
+<div id="app" style="display:none;">
+
+<div class="box">
+<h3>ریاست اضافه کړه</h3>
+<input id="newDept" placeholder="نوی ریاست" onkeydown="if(event.key==='Enter') addDept()">
+<button onclick="addDept()">اضافه کړه</button>
+
+<br><br>
+
+<select id="dept"></select>
+
+<select id="type">
+<option>فرنیچر</option>
+<option>برقی وسایل</option>
+<option>مفروشات</option>
+<option>لوښي</option>
+<option>متفرقه</option>
+</select>
+</div>
+
+<div class="box">
+
+<input id="serial" placeholder="۱ مسلسل" onkeydown="next(event,'doc')">
+<input id="doc" placeholder="۲ سند" onkeydown="next(event,'date')">
+<input id="date" placeholder="۳ نېټه" onkeydown="next(event,'giver')">
+<input id="giver" placeholder="۴ ورکوونکی" onkeydown="next(event,'receiver')">
+<input id="receiver" placeholder="۵ اخیستونکی" onkeydown="next(event,'deptField')">
+<input id="deptField" placeholder="۶ شعبه" onkeydown="next(event,'rank')">
+<input id="rank" placeholder="۷ بست" onkeydown="next(event,'item')">
+<input id="item" placeholder="۸ جنس" onkeydown="next(event,'spec')">
+<input id="spec" placeholder="۹ مشخصات" onkeydown="next(event,'sn')">
+<input id="sn" placeholder="۱۰ سریال" onkeydown="next(event,'source')">
+<input id="source" placeholder="۱۱ سرچینه" onkeydown="next(event,'color')">
+<input id="color" placeholder="۱۲ رنګ" onkeydown="next(event,'qty')">
+<input id="qty" type="number" placeholder="۱۳ تعداد" onkeydown="next(event,'unit')">
+<input id="unit" placeholder="۱۴ واحد" onkeydown="next(event,'price')">
+<input id="price" type="number" placeholder="۱۵ فیات" onkeydown="next(event,'note')">
+<input id="total" placeholder="۱۶ مجموعه" readonly>
+<input id="note" placeholder="۱۷ کتنې" onkeydown="if(event.key==='Enter') addItem()">
+
+<br>
+<button onclick="addItem()">اضافه کړه</button>
+
+</div>
+
+<div class="box">
+<input id="searchId" placeholder="د کارمند ID" onkeydown="if(event.key==='Enter') searchItems()">
+<button onclick="searchItems()">Search</button>
+<button onclick="showItems()">Reset</button>
+</div>
+
+<div class="box">
+
+<table>
+<thead>
+<tr>
+<th>مسلسل</th>
+<th>سند</th>
+<th>نېټه</th>
+<th>ورکوونکی</th>
+<th>اخیستونکی</th>
+<th>شعبه</th>
+<th>بست</th>
+<th>جنس</th>
+<th>مشخصات</th>
+<th>سریال</th>
+<th>سرچینه</th>
+<th>رنګ</th>
+<th>تعداد</th>
+<th>واحد</th>
+<th>فیات</th>
+<th>مجموعه</th>
+<th>کتنې</th>
+<th>ریاست</th>
+<th>بخش</th>
+<th>عمل</th>
+</tr>
+</thead>
+
+<tbody id="tbody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+var items = JSON.parse(localStorage.getItem("items")) || [];
+var depts = JSON.parse(localStorage.getItem("depts")) || ["HR","Finance"];
+
+qty.oninput = price.oninput = function(){
+total.value = qty.value * price.value;
+};
+
+function next(e,id){
+if(e.key==="Enter"){
+document.getElementById(id).focus();
+}
+}
+
+function login(){
+if(pass.value==="1234"){
+loginBox.style.display="none";
+app.style.display="block";
+loadDepts();
+showItems();
+}else{
+alert("Password غلط دی");
+}
+}
+
+function loadDepts(){
+dept.innerHTML="";
+depts.forEach(function(x){
+var op=document.createElement("option");
+op.text=x;
+dept.appendChild(op);
+});
+}
+
+function addDept(){
+if(newDept.value==="") return;
+depts.push(newDept.value);
+localStorage.setItem("depts", JSON.stringify(depts));
+newDept.value="";
+loadDepts();
+}
+
+function addItem(){
+
+var id=prompt("د کارمند ID ولیکه");
+if(!id) return;
+
+var data={
+serial:serial.value,
+doc:doc.value,
+date:date.value,
+giver:giver.value,
+receiver:receiver.value,
+deptField:deptField.value,
+rank:rank.value,
+item:item.value,
+spec:spec.value,
+sn:sn.value,
+source:source.value,
+color:color.value,
+qty:qty.value,
+unit:unit.value,
+price:price.value,
+total:total.value,
+note:note.value,
+dept:dept.value,
+type:type.value,
+id:id
+};
+
+items.push(data);
+localStorage.setItem("items", JSON.stringify(items));
+showItems();
+}
+
+function showItems(){
+tbody.innerHTML="";
+items.forEach(function(x,i){
+addRow(x,i);
+});
+}
+
+function addRow(x,i){
+var row="<tr>"+
+"<td>"+x.serial+"</td>"+
+"<td>"+x.doc+"</td>"+
+"<td>"+x.date+"</td>"+
+"<td>"+x.giver+"</td>"+
+"<td>"+x.receiver+"</td>"+
+"<td>"+x.deptField+"</td>"+
+"<td>"+x.rank+"</td>"+
+"<td>"+x.item+"</td>"+
+"<td>"+x.spec+"</td>"+
+"<td>"+x.sn+"</td>"+
+"<td>"+x.source+"</td>"+
+"<td>"+x.color+"</td>"+
+"<td>"+x.qty+"</td>"+
+"<td>"+x.unit+"</td>"+
+"<td>"+x.price+"</td>"+
+"<td>"+x.total+"</td>"+
+"<td>"+x.note+"</td>"+
+"<td>"+x.dept+"</td>"+
+"<td>"+x.type+"</td>"+
+"<td><button onclick='deleteItem("+i+")'>❌</button></td>"+
+"</tr>";
+
+tbody.innerHTML+=row;
+}
+
+function deleteItem(i){
+if(prompt("Password")!=="1234") return;
+items.splice(i,1);
+localStorage.setItem("items", JSON.stringify(items));
+showItems();
+}
+
+function searchItems(){
+tbody.innerHTML="";
+items.forEach(function(x,i){
+if(x.id===searchId.value){
+addRow(x,i); // 👈 دلته delete هم ساتل شوی
+}
+});
+}
+
+</script>
+
+</body>
+</html>
