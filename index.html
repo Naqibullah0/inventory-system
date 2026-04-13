@@ -1,17 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>سیستم اجناس</title>
-<meta charset="UTF-8">
+<title>د اجناسو مکمل سیستم</title>
 
 <style>
-body{font-family:Arial;background:#eef;padding:20px;}
-.box{background:#fff;padding:15px;margin-bottom:15px;border-radius:10px;}
-input,select{margin:4px;padding:6px;width:130px;}
-button{padding:6px 12px;background:#007bff;color:#fff;border:none;}
-table{width:100%;border-collapse:collapse;}
-th,td{border:1px solid #ccc;padding:5px;font-size:12px;}
-th{background:#007bff;color:white;}
+
+body{
+font-family:Arial;
+background:#eef2f7;
+padding:20px;
+}
+
+.box{
+background:#fff;
+padding:15px;
+margin-bottom:20px;
+border-radius:12px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+input,select{
+padding:6px;
+margin:4px;
+width:140px;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+padding:7px 14px;
+background:#007bff;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0056b3;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid #ccc;
+padding:6px;
+font-size:12px;
+text-align:center;
+}
+
+th{
+background:#007bff;
+color:white;
+}
+
 </style>
 
 </head>
@@ -19,22 +64,30 @@ th{background:#007bff;color:white;}
 <body>
 
 <div id="loginBox" class="box">
+<h3>ننوتل</h3>
 <input type="password" id="pass" placeholder="پاسورډ">
 <button onclick="login()">داخل شه</button>
 </div>
 
-<div id="app" style="display:none;">
+<div id="mainApp" style="display:none;">
 
 <div class="box">
+
+<h4>ریاستونه</h4>
+
 <select id="dept"></select>
+
 <input id="newDept" placeholder="نوی ریاست">
-<button onclick="addDept()">اضافه</button>
+<button onclick="addDept()">اضافه کړه</button>
+
 </div>
 
 <div class="box">
 
+<h4>د اجناسو معلومات</h4>
+
 <input id="serial" placeholder="مسلسل">
-<input id="doc" placeholder="سند">
+<input id="doc" placeholder="سند ګڼه">
 <input id="date" placeholder="نېټه">
 <input id="giver" placeholder="ورکوونکی">
 <input id="receiver" placeholder="اخیستونکی">
@@ -42,13 +95,13 @@ th{background:#007bff;color:white;}
 <input id="rank" placeholder="بست">
 <input id="item" placeholder="جنس">
 <input id="spec" placeholder="مشخصات">
-<input id="sn" placeholder="سریال">
+<input id="sn" placeholder="سریال نمبر">
 <input id="source" placeholder="سرچینه">
 <input id="color" placeholder="رنګ">
 <input id="qty" type="number" placeholder="تعداد">
 <input id="unit" placeholder="واحد">
 <input id="price" type="number" placeholder="فیات">
-<input id="total" readonly placeholder="مجموعه">
+<input id="total" placeholder="مجموعه" readonly>
 <input id="note" placeholder="کتنې">
 
 <br>
@@ -57,24 +110,50 @@ th{background:#007bff;color:white;}
 </div>
 
 <div class="box">
+
+<h4>پلټنه (Search)</h4>
+
 <input id="searchDept" placeholder="ریاست">
 <input id="searchId" placeholder="ID">
 <button onclick="searchItems()">Search</button>
 <button onclick="resetTable()">Reset</button>
+
 </div>
 
 <div class="box">
+
+<h4>جدول</h4>
+
 <table>
+
 <thead>
 <tr>
-<th>مسلسل</th><th>سند</th><th>نېټه</th><th>ورکوونکی</th><th>اخیستونکی</th>
-<th>شعبه</th><th>بست</th><th>جنس</th><th>مشخصات</th><th>سریال</th>
-<th>سرچینه</th><th>رنګ</th><th>تعداد</th><th>واحد</th><th>فیات</th>
-<th>مجموعه</th><th>کتنې</th><th>ریاست</th><th>عمل</th>
+<th>مسلسل</th>
+<th>سند</th>
+<th>نېټه</th>
+<th>ورکوونکی</th>
+<th>اخیستونکی</th>
+<th>شعبه</th>
+<th>بست</th>
+<th>جنس</th>
+<th>مشخصات</th>
+<th>سریال</th>
+<th>سرچینه</th>
+<th>رنګ</th>
+<th>تعداد</th>
+<th>واحد</th>
+<th>فیات</th>
+<th>مجموعه</th>
+<th>کتنې</th>
+<th>ریاست</th>
+<th>عمل</th>
 </tr>
 </thead>
+
 <tbody id="tbody"></tbody>
+
 </table>
+
 </div>
 
 </div>
@@ -86,9 +165,9 @@ import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc }
 from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const app = initializeApp({
-apiKey:"AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
-authDomain:"inventory-system-64d88.firebaseapp.com",
-projectId:"inventory-system-64d88"
+apiKey: "AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
+authDomain: "inventory-system-64d88.firebaseapp.com",
+projectId: "inventory-system-64d88"
 });
 
 const db = getFirestore(app);
@@ -96,24 +175,29 @@ const db = getFirestore(app);
 let allItems=[];
 
 // login
-window.login=()=>{
+window.login=function(){
 if(pass.value==="1234"){
 loginBox.style.display="none";
-app.style.display="block";
+mainApp.style.display="block";
 loadDept();
-live();
-}else alert("پاسورډ غلط");
+liveItems();
+}else{
+alert("پاسورډ غلط دی");
+}
 };
 
-// total auto
-qty.oninput=price.oninput=()=> total.value=qty.value*price.value;
+// auto total
+qty.oninput = price.oninput = function(){
+total.value = qty.value * price.value;
+};
 
 // enter move
-document.querySelectorAll("input").forEach((e,i,arr)=>{
-e.addEventListener("keydown",ev=>{
-if(ev.key==="Enter"){
-ev.preventDefault();
-if(arr[i+1]) arr[i+1].focus();
+let inputs=document.querySelectorAll("input");
+inputs.forEach((el,i)=>{
+el.addEventListener("keydown",function(e){
+if(e.key==="Enter"){
+e.preventDefault();
+if(inputs[i+1]) inputs[i+1].focus();
 }
 });
 });
@@ -130,50 +214,70 @@ dept.add(op);
 });
 }
 
-window.addDept=async()=>{
+// add dept
+window.addDept=async function(){
 if(!newDept.value) return;
-await addDoc(collection(db,"departments"),{name:newDept.value});
+
+await addDoc(collection(db,"departments"),{
+name:newDept.value
+});
+
 newDept.value="";
 };
 
 // live items
-function live(){
+function liveItems(){
 onSnapshot(collection(db,"items"),snap=>{
 allItems=[];
 tbody.innerHTML="";
+
 snap.forEach(d=>{
-let x=d.data(); x.idd=d.id;
+let x=d.data();
+x.docId=d.id;
 allItems.push(x);
-draw(x);
+renderRow(x);
 });
 });
 }
 
-// draw row
-function draw(x){
-tbody.innerHTML+=`
-<tr>
-<td>${x.serial}</td><td>${x.doc}</td><td>${x.date}</td>
-<td>${x.giver}</td><td>${x.receiver}</td>
-<td>${x.deptField}</td><td>${x.rank}</td>
-<td>${x.item}</td><td>${x.spec}</td>
-<td>${x.sn}</td><td>${x.source}</td>
-<td>${x.color}</td><td>${x.qty}</td>
-<td>${x.unit}</td><td>${x.price}</td>
-<td>${x.total}</td><td>${x.note}</td>
+// render
+function renderRow(x){
+
+let row = document.createElement("tr");
+
+row.innerHTML = `
+<td>${x.serial}</td>
+<td>${x.doc}</td>
+<td>${x.date}</td>
+<td>${x.giver}</td>
+<td>${x.receiver}</td>
+<td>${x.deptField}</td>
+<td>${x.rank}</td>
+<td>${x.item}</td>
+<td>${x.spec}</td>
+<td>${x.sn}</td>
+<td>${x.source}</td>
+<td>${x.color}</td>
+<td>${x.qty}</td>
+<td>${x.unit}</td>
+<td>${x.price}</td>
+<td>${x.total}</td>
+<td>${x.note}</td>
 <td>${x.dept}</td>
-<td><button onclick="del('${x.idd}')">❌</button></td>
-</tr>`;
+<td><button onclick="deleteItem('${x.docId}')">❌</button></td>
+`;
+
+tbody.appendChild(row);
 }
 
-// 🔥 FIXED ADD ITEM
-window.addItem=async()=>{
-if(!item.value){ alert("جنس خالي دی"); return; }
+// add item
+window.addItem=async function(){
 
-let empId = prompt("د کارمند ID ولیکه");
-if(!empId) return;
+let id = prompt("د کارمند ID ولیکه");
+if(!id) return;
 
 await addDoc(collection(db,"items"),{
+
 serial:serial.value,
 doc:doc.value,
 date:date.value,
@@ -192,36 +296,40 @@ price:price.value,
 total:total.value,
 note:note.value,
 dept:dept.value,
-id:empId
+id:id
+
 });
 
-// پاکول
-document.querySelectorAll("input").forEach(i=>i.value="");
 };
 
 // delete
-window.del=async(id)=>{
+window.deleteItem=async function(id){
 if(prompt("Password")!=="1234") return;
 await deleteDoc(doc(db,"items",id));
 };
 
-// 🔥 FIXED SEARCH
-window.searchItems=()=>{
+// search
+window.searchItems=function(){
+
 tbody.innerHTML="";
+
 allItems.forEach(x=>{
+
 if(
 (searchDept.value && x.dept===searchDept.value) ||
 (searchId.value && x.id===searchId.value)
 ){
-draw(x);
+renderRow(x);
 }
+
 });
+
 };
 
 // reset
-window.resetTable=()=>{
+window.resetTable=function(){
 tbody.innerHTML="";
-allItems.forEach(draw);
+allItems.forEach(renderRow);
 };
 
 </script>
