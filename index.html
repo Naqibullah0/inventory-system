@@ -13,7 +13,6 @@ table{width:100%;border-collapse:collapse;}
 th,td{border:1px solid #ccc;padding:5px;font-size:12px;}
 th{background:#007bff;color:white;}
 </style>
-
 </head>
 
 <body>
@@ -106,8 +105,8 @@ let allItems=[];
 
 // login
 window.login=function(){
-if(pass.value==="1234"){
-loginBox.style.display="none";
+if(document.getElementById("pass").value==="1234"){
+document.getElementById("loginBox").style.display="none";
 document.getElementById("mainApp").style.display="block";
 loadDept();
 liveItems();
@@ -117,34 +116,39 @@ alert("پاسورډ غلط دی");
 };
 
 // total
-qty.oninput=price.oninput=function(){
-total.value = qty.value * price.value;
+document.getElementById("qty").oninput=
+document.getElementById("price").oninput=function(){
+let q=document.getElementById("qty").value || 0;
+let p=document.getElementById("price").value || 0;
+document.getElementById("total").value = q * p;
 };
 
 // departments
 function loadDept(){
 onSnapshot(collection(db,"departments"),snap=>{
-dept.innerHTML="";
-snap.forEach(d=>{
+let d=document.getElementById("dept");
+d.innerHTML="";
+snap.forEach(x=>{
 let op=document.createElement("option");
-op.text=d.data().name;
-dept.add(op);
+op.text=x.data().name;
+d.add(op);
 });
 });
 }
 
 // add dept
 window.addDept=async function(){
-if(!newDept.value) return;
-await addDoc(collection(db,"departments"),{name:newDept.value});
-newDept.value="";
+let val=document.getElementById("newDept").value;
+if(!val) return;
+await addDoc(collection(db,"departments"),{name:val});
+document.getElementById("newDept").value="";
 };
 
 // live items
 function liveItems(){
 onSnapshot(collection(db,"items"),snap=>{
 allItems=[];
-tbody.innerHTML="";
+document.getElementById("tbody").innerHTML="";
 snap.forEach(d=>{
 let x=d.data();
 x.idd=d.id;
@@ -156,17 +160,17 @@ draw(x);
 
 // draw
 function draw(x){
-tbody.innerHTML+=`
+document.getElementById("tbody").innerHTML+=`
 <tr>
-<td>${x.serial}</td><td>${x.doc}</td><td>${x.date}</td>
-<td>${x.giver}</td><td>${x.receiver}</td>
-<td>${x.deptField}</td><td>${x.rank}</td>
-<td>${x.item}</td><td>${x.spec}</td>
-<td>${x.sn}</td><td>${x.source}</td>
-<td>${x.color}</td><td>${x.qty}</td>
-<td>${x.unit}</td><td>${x.price}</td>
-<td>${x.total}</td><td>${x.note}</td>
-<td>${x.dept}</td><td>${x.type}</td>
+<td>${x.serial||""}</td><td>${x.doc||""}</td><td>${x.date||""}</td>
+<td>${x.giver||""}</td><td>${x.receiver||""}</td>
+<td>${x.deptField||""}</td><td>${x.rank||""}</td>
+<td>${x.item||""}</td><td>${x.spec||""}</td>
+<td>${x.sn||""}</td><td>${x.source||""}</td>
+<td>${x.color||""}</td><td>${x.qty||""}</td>
+<td>${x.unit||""}</td><td>${x.price||""}</td>
+<td>${x.total||""}</td><td>${x.note||""}</td>
+<td>${x.dept||""}</td><td>${x.type||""}</td>
 <td><button onclick="del('${x.idd}')">❌</button></td>
 </tr>`;
 }
@@ -174,30 +178,31 @@ tbody.innerHTML+=`
 // add item
 window.addItem=async function(){
 try{
+
 let empId=prompt("ID ولیکه");
 if(!empId) return;
 
 await addDoc(collection(db,"items"),{
-serial:serial.value,
-doc:doc.value,
-date:date.value,
-giver:giver.value,
-receiver:receiver.value,
-deptField:deptField.value,
-rank:rank.value,
-item:item.value,
-spec:spec.value,
-sn:sn.value,
-source:source.value,
-color:color.value,
-qty:qty.value,
-unit:unit.value,
-price:price.value,
-total:total.value,
-note:note.value,
-dept:dept.value,
-type:type.value,
-id:empId
+serial: document.getElementById("serial").value || "",
+doc: document.getElementById("doc").value || "",
+date: document.getElementById("date").value || "",
+giver: document.getElementById("giver").value || "",
+receiver: document.getElementById("receiver").value || "",
+deptField: document.getElementById("deptField").value || "",
+rank: document.getElementById("rank").value || "",
+item: document.getElementById("item").value || "",
+spec: document.getElementById("spec").value || "",
+sn: document.getElementById("sn").value || "",
+source: document.getElementById("source").value || "",
+color: document.getElementById("color").value || "",
+qty: document.getElementById("qty").value || "",
+unit: document.getElementById("unit").value || "",
+price: document.getElementById("price").value || "",
+total: document.getElementById("total").value || "",
+note: document.getElementById("note").value || "",
+dept: document.getElementById("dept").value || "",
+type: document.getElementById("type").value || "",
+id: empId
 });
 
 alert("✅ اضافه شو");
@@ -215,11 +220,12 @@ await deleteDoc(doc(db,"items",id));
 
 // search
 window.searchItems=function(){
+let tbody=document.getElementById("tbody");
 tbody.innerHTML="";
 allItems.forEach(x=>{
 if(
-(searchDept.value && x.dept===searchDept.value) ||
-(searchId.value && x.id===searchId.value)
+(document.getElementById("searchDept").value && x.dept===document.getElementById("searchDept").value) ||
+(document.getElementById("searchId").value && x.id===document.getElementById("searchId").value)
 ){
 draw(x);
 }
@@ -228,6 +234,7 @@ draw(x);
 
 // reset
 window.resetTable=function(){
+let tbody=document.getElementById("tbody");
 tbody.innerHTML="";
 allItems.forEach(draw);
 };
