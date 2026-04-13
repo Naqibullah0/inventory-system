@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>سیستم اجناس</title>
+<title>د اجناسو سیستم</title>
 <meta charset="UTF-8">
 
 <style>
@@ -19,18 +19,18 @@ th{background:#007bff;color:white;}
 <body>
 
 <div id="loginBox" class="box">
+<h3>ننوتل</h3>
 <input type="password" id="pass" placeholder="پاسورډ">
 <button onclick="login()">داخل شه</button>
 </div>
 
-<div id="app" style="display:none;">
+<div id="mainApp" style="display:none;">
 
 <div class="box">
 <select id="dept"></select>
 <input id="newDept" placeholder="نوی ریاست">
-<button onclick="addDept()">اضافه</button>
+<button onclick="addDept()">ریاست اضافه کړه</button>
 
-<!-- 🔥 بخش -->
 <select id="type">
 <option>فرنیچر</option>
 <option>مفروشات</option>
@@ -38,7 +38,6 @@ th{background:#007bff;color:white;}
 <option>لوښي</option>
 <option>متفرقه</option>
 </select>
-
 </div>
 
 <div class="box">
@@ -95,28 +94,32 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/fireba
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } 
 from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-const app = initializeApp({
+const firebaseApp = initializeApp({
 apiKey:"AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
 authDomain:"inventory-system-64d88.firebaseapp.com",
 projectId:"inventory-system-64d88"
 });
 
-const db = getFirestore(app);
+const db = getFirestore(firebaseApp);
 
 let allItems=[];
 
 // login
-window.login=()=>{
+window.login=function(){
 if(pass.value==="1234"){
 loginBox.style.display="none";
-app.style.display="block";
+document.getElementById("mainApp").style.display="block";
 loadDept();
-live();
-}else alert("پاسورډ غلط");
+liveItems();
+}else{
+alert("پاسورډ غلط دی");
+}
 };
 
 // total
-qty.oninput=price.oninput=()=> total.value=qty.value*price.value;
+qty.oninput=price.oninput=function(){
+total.value = qty.value * price.value;
+};
 
 // departments
 function loadDept(){
@@ -130,19 +133,21 @@ dept.add(op);
 });
 }
 
-window.addDept=async()=>{
+// add dept
+window.addDept=async function(){
 if(!newDept.value) return;
 await addDoc(collection(db,"departments"),{name:newDept.value});
 newDept.value="";
 };
 
-// live
-function live(){
+// live items
+function liveItems(){
 onSnapshot(collection(db,"items"),snap=>{
 allItems=[];
 tbody.innerHTML="";
 snap.forEach(d=>{
-let x=d.data(); x.idd=d.id;
+let x=d.data();
+x.idd=d.id;
 allItems.push(x);
 draw(x);
 });
@@ -166,10 +171,9 @@ tbody.innerHTML+=`
 </tr>`;
 }
 
-// 🔥 فاینل AddItem fix
-window.addItem=async()=>{
+// add item
+window.addItem=async function(){
 try{
-
 let empId=prompt("ID ولیکه");
 if(!empId) return;
 
@@ -204,13 +208,13 @@ alert("❌ error: "+e.message);
 };
 
 // delete
-window.del=async(id)=>{
+window.del=async function(id){
 if(prompt("Password")!=="1234") return;
 await deleteDoc(doc(db,"items",id));
 };
 
 // search
-window.searchItems=()=>{
+window.searchItems=function(){
 tbody.innerHTML="";
 allItems.forEach(x=>{
 if(
@@ -223,7 +227,7 @@ draw(x);
 };
 
 // reset
-window.resetTable=()=>{
+window.resetTable=function(){
 tbody.innerHTML="";
 allItems.forEach(draw);
 };
