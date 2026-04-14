@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>عامه راپور</title>
+
+<style>
+body{font-family:Arial;background:#f4f7f9;padding:20px;}
+.box{background:white;padding:15px;margin-bottom:15px;border-radius:10px;}
+button{padding:5px 10px;margin:3px;}
+</style>
+
+</head>
+<body>
+
+<h2>عامه راپور (ټول اجناس)</h2>
+
+<div id="list"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, updateDoc, doc } 
+from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+apiKey:"AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
+authDomain:"inventory-system-64d88.firebaseapp.com",
+projectId:"inventory-system-64d88"
+});
+
+const db = getFirestore(app);
+
+onSnapshot(collection(db,"items"),snap=>{
+list.innerHTML="";
+snap.forEach(d=>{
+let x=d.data();
+
+list.innerHTML+=`
+<div class="box">
+<b>${x.item}</b> - ${x.province}<br>
+👍 ${x.likes||0}
+<button onclick="like('${d.id}', ${x.likes||0})">Like</button>
+
+<br>
+<input id="c${d.id}" placeholder="کمينټ">
+<button onclick="comment('${d.id}')">Send</button>
+
+</div>
+`;
+});
+});
+
+window.like=async(id,old)=>{
+await updateDoc(doc(db,"items",id),{
+likes:(old||0)+1
+});
+};
+
+window.comment=function(id){
+let txt=document.getElementById("c"+id).value;
+alert("کمينټ ثبت شو: "+txt);
+};
+
+</script>
+
+</body>
+</html>
