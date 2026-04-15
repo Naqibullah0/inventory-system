@@ -2,74 +2,116 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>عامه راپور</title>
+<title>خبرونه</title>
 
 <style>
-body{font-family:Arial;background:#f4f7f9;padding:20px;}
-.box{background:white;padding:15px;margin-bottom:15px;border-radius:10px;}
-button{padding:5px 10px;margin:3px;}
+body{
+  font-family:Arial;
+  background:#f4f7f9;
+  padding:20px;
+}
+h2{
+  text-align:center;
+  color:#006400;
+}
+.box{
+  background:white;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:10px;
+  box-shadow:0 0 5px rgba(0,0,0,0.1);
+}
+button{
+  padding:5px 10px;
+  margin:3px;
+  background:#006400;
+  color:white;
+  border:none;
+  border-radius:5px;
+}
+input{
+  padding:5px;
+  margin-top:5px;
+  width:70%;
+}
 </style>
 
 </head>
 <body>
 
-<h2>عامه راپور (ټول اجناس)</h2>
+<h2>خبرونه (ټول معلومات)</h2>
 
 <div id="list"></div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, updateDoc, doc } 
-from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-const app = initializeApp({
-apiKey:"AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
-authDomain:"inventory-system-64d88.firebaseapp.com",
-projectId:"inventory-system-64d88"
-});
+import { 
+  getFirestore, 
+  collection, 
+  onSnapshot, 
+  updateDoc, 
+  doc, 
+  arrayUnion 
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-const db = getFirestore(app);
-
-onSnapshot(collection(db,"items"),snap=>{
-list.innerHTML="";
-snap.forEach(d=>{
-let x=d.data();
-
-list.innerHTML+=`
-<div class="box">
-<b>${x.item}</b> - ${x.province}<br>
-👍 ${x.likes||0}
-<button onclick="like('${d.id}', ${x.likes||0})">Like</button>
-
-<br>
-<input id="c${d.id}" placeholder="کمينټ">
-<div>${(x.comments||[]).join("<br>")}</div>
-<button onclick="comment('${d.id}')">Send</button>
-
-</div>
-`;
-});
-});
-
-window.like=async(id,old)=>{
-await updateDoc(doc(db,"items",id),{
-likes:(old||0)+1
-});
+const firebaseConfig = {
+  apiKey: "AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
+  authDomain: "inventory-system-64d88.firebaseapp.com",
+  projectId: "inventory-system-64d88",
+  storageBucket: "inventory-system-64d88.firebasestorage.app",
+  messagingSenderId: "861425343925",
+  appId: "1:861425343925:web:5d14fdcc3824afb8c20dfc"
 };
 
-import { updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-window.comment = async function(id){
-let txt = document.getElementById("c"+id).value;
+const list = document.getElementById("list");
 
-if(!txt) return;
+onSnapshot(collection(db,"items"),(snap)=>{
+  list.innerHTML="";
 
-await updateDoc(doc(db,"items",id),{
-comments: arrayUnion(txt)
+  snap.forEach(d=>{
+    let x = d.data();
+
+    list.innerHTML += `
+    <div class="box">
+      <b>${x.item || "—"}</b> - ${x.province || ""} <br><br>
+
+      👍 ${x.likes || 0}
+      <button onclick="like('${d.id}', ${x.likes || 0})">Like</button>
+
+      <br><br>
+
+      <input id="c${d.id}" placeholder="کمينټ وليکه">
+      <button onclick="comment('${d.id}')">Send</button>
+
+      <div style="margin-top:10px; color:#333;">
+        ${(x.comments || []).join("<br>")}
+      </div>
+    </div>
+    `;
+  });
 });
 
-alert("کمينټ ثبت شو ✅");
+window.like = async (id, oldLikes)=>{
+  await updateDoc(doc(db,"items",id),{
+    likes:(oldLikes || 0) + 1
+  });
+};
+
+window.comment = async (id)=>{
+  let txt = document.getElementById("c"+id).value;
+
+  if(!txt) return;
+
+  await updateDoc(doc(db,"items",id),{
+    comments: arrayUnion(txt)
+  });
+
+  document.getElementById("c"+id).value = "";
 };
 
 </script>
