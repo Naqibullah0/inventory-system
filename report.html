@@ -44,6 +44,7 @@ list.innerHTML+=`
 
 <br>
 <input id="c${d.id}" placeholder="کمينټ">
+<div>${(x.comments||[]).join("<br>")}</div>
 <button onclick="comment('${d.id}')">Send</button>
 
 </div>
@@ -57,9 +58,18 @@ likes:(old||0)+1
 });
 };
 
-window.comment=function(id){
-let txt=document.getElementById("c"+id).value;
-alert("کمينټ ثبت شو: "+txt);
+import { updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+window.comment = async function(id){
+let txt = document.getElementById("c"+id).value;
+
+if(!txt) return;
+
+await updateDoc(doc(db,"items",id),{
+comments: arrayUnion(txt)
+});
+
+alert("کمينټ ثبت شو ✅");
 };
 
 </script>
