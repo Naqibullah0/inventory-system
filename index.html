@@ -1,88 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="ps" dir="rtl">
 <head>
-<title>د اجناسو سیستم</title>
 <meta charset="UTF-8">
+<title>سیستم اجناس</title>
 
 <style>
-body{font-family:Arial;background:#eef;padding:20px;}
-.box{background:#fff;padding:15px;margin-bottom:15px;border-radius:10px;}
-input,select{margin:4px;padding:6px;width:130px;}
-button{padding:6px 12px;background:#007bff;color:#fff;border:none;}
+body{font-family:Arial;background:#f4f7f9;margin:0;direction:rtl;}
+.header{background:#006400;color:white;padding:15px;text-align:center;font-size:20px;}
+.box{background:white;margin:15px;padding:15px;border-radius:10px;}
+input,select{padding:6px;margin:4px;border:1px solid #ccc;border-radius:5px;}
+button{background:#006400;color:white;padding:7px 12px;border:none;border-radius:5px;}
 table{width:100%;border-collapse:collapse;}
-th,td{border:1px solid #ccc;padding:5px;font-size:12px;}
-th{background:#007bff;color:white;}
+th,td{border:1px solid #ccc;padding:6px;text-align:center;}
+th{background:#006400;color:white;}
 </style>
+
 </head>
 
 <body>
 
+<div class="header">د اجناسو رسمي مدیریت سیستم</div>
+
+<!-- LOGIN -->
 <div id="loginBox" class="box">
 <h3>ننوتل</h3>
-<input type="password" id="pass" placeholder="پاسورډ">
+<input id="phone" placeholder="تلیفون نمبر">
+<input id="pin" placeholder="پټ کوډ">
+<select id="province">
+<option>کابل</option><option>کندهار</option><option>هلمند</option>
+<option>هرات</option><option>بلخ</option><option>ننګرهار</option>
+</select>
 <button onclick="login()">داخل شه</button>
 </div>
 
-<div id="mainApp" style="display:none;">
-
-<div class="box">
-<select id="dept"></select>
-<input id="newDept" placeholder="نوی ریاست">
-<button onclick="addDept()">ریاست اضافه کړه</button>
-
-<select id="type">
-<option>فرنیچر</option>
-<option>مفروشات</option>
-<option>برقی وسایل</option>
-<option>لوښي</option>
-<option>متفرقه</option>
-</select>
-</div>
+<!-- APP -->
+<div id="app" style="display:none;">
 
 <div class="box">
 
-<input id="serial" placeholder="مسلسل">
-<input id="doc" placeholder="سند">
+<input id="serial" placeholder="مسلسل نمبر">
+<input id="doc" placeholder="د سند ګڼه">
 <input id="date" placeholder="نېټه">
 <input id="giver" placeholder="ورکوونکی">
 <input id="receiver" placeholder="اخیستونکی">
-<input id="deptField" placeholder="شعبه">
+<input id="deptField" placeholder="اړونده شعبه">
 <input id="rank" placeholder="بست">
-<input id="item" placeholder="جنس">
+<input id="item" placeholder="د جنس نوم">
 <input id="spec" placeholder="مشخصات">
-<input id="sn" placeholder="سریال">
+<input id="sn" placeholder="سریال نمبر">
 <input id="source" placeholder="سرچینه">
 <input id="color" placeholder="رنګ">
 <input id="qty" type="number" placeholder="تعداد">
 <input id="unit" placeholder="واحد">
 <input id="price" type="number" placeholder="فیات">
-<input id="total" readonly placeholder="مجموعه">
+<input id="total" placeholder="مجموعه" readonly>
 <input id="note" placeholder="کتنې">
 
 <br>
+
 <button onclick="addItem()">اضافه کړه</button>
+<button onclick="window.print()">چاپ</button>
 
 </div>
 
 <div class="box">
-<input id="searchDept" placeholder="ریاست">
-<input id="searchId" placeholder="ID">
+
+<input id="searchId" placeholder="ID لټون">
 <button onclick="searchItems()">Search</button>
-<button onclick="resetTable()">Reset</button>
-</div>
 
-<div class="box">
 <table>
 <thead>
 <tr>
-<th>مسلسل</th><th>سند</th><th>نېټه</th><th>ورکوونکی</th><th>اخیستونکی</th>
-<th>شعبه</th><th>بست</th><th>جنس</th><th>مشخصات</th><th>سریال</th>
-<th>سرچینه</th><th>رنګ</th><th>تعداد</th><th>واحد</th><th>فیات</th>
-<th>مجموعه</th><th>کتنې</th><th>ریاست</th><th>بخش</th><th>عمل</th>
+<th>مسلسل</th><th>سند</th><th>نېټه</th><th>جنس</th><th>تعداد</th><th>ولایت</th><th>عمل</th>
 </tr>
 </thead>
 <tbody id="tbody"></tbody>
 </table>
+
 </div>
 
 </div>
@@ -93,150 +87,129 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/fireba
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } 
 from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-const firebaseApp = initializeApp({
+const app = initializeApp({
 apiKey:"AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
 authDomain:"inventory-system-64d88.firebaseapp.com",
 projectId:"inventory-system-64d88"
 });
 
-const db = getFirestore(firebaseApp);
+const db = getFirestore(app);
 
+let currentProvince="";
+let isAdmin=false;
 let allItems=[];
 
-// login
+// LOGIN
 window.login=function(){
-if(document.getElementById("pass").value==="1234"){
-document.getElementById("loginBox").style.display="none";
-document.getElementById("mainApp").style.display="block";
-loadDept();
-liveItems();
+let phone=phoneInput.value;
+let pin=pinInput.value;
+
+if(phone==="0700000000" && pin==="9999"){
+isAdmin=true;
 }else{
-alert("پاسورډ غلط دی");
-}
-};
-
-// total
-document.getElementById("qty").oninput=
-document.getElementById("price").oninput=function(){
-let q=document.getElementById("qty").value || 0;
-let p=document.getElementById("price").value || 0;
-document.getElementById("total").value = q * p;
-};
-
-// departments
-function loadDept(){
-onSnapshot(collection(db,"departments"),snap=>{
-let d=document.getElementById("dept");
-d.innerHTML="";
-snap.forEach(x=>{
-let op=document.createElement("option");
-op.text=x.data().name;
-d.add(op);
-});
-});
+currentProvince=province.value;
 }
 
-// add dept
-window.addDept=async function(){
-let val=document.getElementById("newDept").value;
-if(!val) return;
-await addDoc(collection(db,"departments"),{name:val});
-document.getElementById("newDept").value="";
+loginBox.style.display="none";
+app.style.display="block";
+
+loadItems();
 };
 
-// live items
-function liveItems(){
+// TOTAL
+qty.oninput=price.oninput=function(){
+total.value=(qty.value||0)*(price.value||0);
+};
+
+// ENTER NEXT
+document.querySelectorAll("input").forEach((el,i,arr)=>{
+el.addEventListener("keydown",e=>{
+if(e.key==="Enter"){
+e.preventDefault();
+arr[i+1]?.focus();
+}
+});
+});
+
+// LOAD
+function loadItems(){
 onSnapshot(collection(db,"items"),snap=>{
+tbody.innerHTML="";
 allItems=[];
-document.getElementById("tbody").innerHTML="";
+
 snap.forEach(d=>{
 let x=d.data();
 x.idd=d.id;
-allItems.push(x);
-draw(x);
-});
-});
-}
 
-// draw
-function draw(x){
-document.getElementById("tbody").innerHTML+=`
+if(isAdmin || x.province===currentProvince){
+allItems.push(x);
+
+tbody.innerHTML+=`
 <tr>
-<td>${x.serial||""}</td><td>${x.doc||""}</td><td>${x.date||""}</td>
-<td>${x.giver||""}</td><td>${x.receiver||""}</td>
-<td>${x.deptField||""}</td><td>${x.rank||""}</td>
-<td>${x.item||""}</td><td>${x.spec||""}</td>
-<td>${x.sn||""}</td><td>${x.source||""}</td>
-<td>${x.color||""}</td><td>${x.qty||""}</td>
-<td>${x.unit||""}</td><td>${x.price||""}</td>
-<td>${x.total||""}</td><td>${x.note||""}</td>
-<td>${x.dept||""}</td><td>${x.type||""}</td>
+<td>${x.serial||""}</td>
+<td>${x.doc||""}</td>
+<td>${x.date||""}</td>
+<td>${x.item||""}</td>
+<td>${x.qty||""}</td>
+<td>${x.province||""}</td>
 <td><button onclick="del('${x.idd}')">❌</button></td>
 </tr>`;
 }
+});
+});
+}
 
-// add item
+// ADD
 window.addItem=async function(){
-try{
-
-let empId=prompt("ID ولیکه");
-if(!empId) return;
+let id=prompt("ID ولیکه");
+if(!id) return;
 
 await addDoc(collection(db,"items"),{
-serial: document.getElementById("serial").value || "",
-doc: document.getElementById("doc").value || "",
-date: document.getElementById("date").value || "",
-giver: document.getElementById("giver").value || "",
-receiver: document.getElementById("receiver").value || "",
-deptField: document.getElementById("deptField").value || "",
-rank: document.getElementById("rank").value || "",
-item: document.getElementById("item").value || "",
-spec: document.getElementById("spec").value || "",
-sn: document.getElementById("sn").value || "",
-source: document.getElementById("source").value || "",
-color: document.getElementById("color").value || "",
-qty: document.getElementById("qty").value || "",
-unit: document.getElementById("unit").value || "",
-price: document.getElementById("price").value || "",
-total: document.getElementById("total").value || "",
-note: document.getElementById("note").value || "",
-dept: document.getElementById("dept").value || "",
-type: document.getElementById("type").value || "",
-id: empId
+serial:serial.value,
+doc:doc.value,
+date:date.value,
+giver:giver.value,
+receiver:receiver.value,
+deptField:deptField.value,
+rank:rank.value,
+item:item.value,
+spec:spec.value,
+sn:sn.value,
+source:source.value,
+color:color.value,
+qty:qty.value,
+unit:unit.value,
+price:price.value,
+total:total.value,
+note:note.value,
+province:isAdmin ? prompt("ولایت ولیکه") : currentProvince,
+id:id
 });
-
-alert("✅ اضافه شو");
-
-}catch(e){
-alert("❌ error: "+e.message);
-}
 };
 
-// delete
+// DELETE
 window.del=async function(id){
-if(prompt("Password")!=="1234") return;
+if(prompt("پټ کوډ")!=="1234") return;
 await deleteDoc(doc(db,"items",id));
 };
 
-// search
+// SEARCH
 window.searchItems=function(){
-let tbody=document.getElementById("tbody");
 tbody.innerHTML="";
 allItems.forEach(x=>{
-if(
-(document.getElementById("searchDept").value && x.dept===document.getElementById("searchDept").value) ||
-(document.getElementById("searchId").value && x.id===document.getElementById("searchId").value)
-){
-draw(x);
+if(x.id===searchId.value){
+tbody.innerHTML+=`
+<tr>
+<td>${x.serial}</td>
+<td>${x.doc}</td>
+<td>${x.date}</td>
+<td>${x.item}</td>
+<td>${x.qty}</td>
+<td>${x.province}</td>
+<td></td>
+</tr>`;
 }
 });
-};
-
-// reset
-window.resetTable=function(){
-let tbody=document.getElementById("tbody");
-tbody.innerHTML="";
-allItems.forEach(draw);
 };
 
 </script>
