@@ -2,16 +2,17 @@
 <html lang="ps" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>سیستم اجناس</title>
+<title>د اجناسو مدیریت سیستم</title>
 
 <style>
-body{font-family:Arial;background:#f4f7f9;margin:0;direction:rtl;}
-.header{background:#006400;color:white;padding:15px;text-align:center;font-size:20px;}
-.box{background:white;margin:15px;padding:15px;border-radius:10px;}
-input,select{padding:6px;margin:4px;border:1px solid #ccc;border-radius:5px;}
-button{background:#006400;color:white;padding:7px 12px;border:none;border-radius:5px;}
-table{width:100%;border-collapse:collapse;}
-th,td{border:1px solid #ccc;padding:6px;text-align:center;}
+body{font-family:Arial;background:#eef2f3;margin:0;direction:rtl;}
+.header{background:#006400;color:#fff;padding:15px;text-align:center;font-size:22px;}
+.box{background:#fff;margin:15px;padding:15px;border-radius:10px;}
+input,select{padding:6px;margin:4px;border:1px solid #ccc;border-radius:5px;width:140px;}
+button{background:#006400;color:white;padding:7px 12px;border:none;border-radius:5px;cursor:pointer;}
+button:hover{background:#004d00;}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{border:1px solid #ccc;padding:6px;text-align:center;font-size:13px;}
 th{background:#006400;color:white;}
 </style>
 
@@ -24,47 +25,24 @@ th{background:#006400;color:white;}
 <!-- LOGIN -->
 <div id="loginBox" class="box">
 <h3>ننوتل</h3>
+
 <input id="phoneInput" placeholder="تلیفون نمبر">
 <input id="pinInput" placeholder="پټ کوډ">
 
 <select id="province">
 <option value="">مرکزي اداره</option>
-<option>کابل</option>
-<option>کندهار</option>
-<option>هلمند</option>
-<option>هرات</option>
-<option>بلخ</option>
-<option>ننګرهار</option>
-<option>لغمان</option>
-<option>پکتیا</option>
-<option>خوست</option>
-<option>غزني</option>
-<option>لوګر</option>
-<option>پروان</option>
-<option>کاپیسا</option>
-<option>پنجشیر</option>
-<option>بغلان</option>
-<option>کندوز</option>
-<option>تخار</option>
-<option>بدخشان</option>
-<option>سمنگان</option>
-<option>جوزجان</option>
-<option>فاریاب</option>
-<option>سرپل</option>
-<option>دایکندی</option>
-<option>بامیان</option>
-<option>غور</option>
-<option>فراه</option>
-<option>نیمروز</option>
-<option>اروزګان</option>
-<option>زابل</option>
-<option>بادغیس</option>
-<option>نورستان</option>
-<option>کنړ</option>
+<option>کابل</option><option>کندهار</option><option>هلمند</option><option>هرات</option>
+<option>بلخ</option><option>ننګرهار</option><option>لغمان</option><option>کنړ</option>
+<option>نورستان</option><option>پکتیا</option><option>خوست</option><option>پکتیکا</option>
+<option>غزني</option><option>لوګر</option><option>میدان وردګ</option><option>پروان</option>
+<option>کاپیسا</option><option>پنجشیر</option><option>بغلان</option><option>کندوز</option>
+<option>تخار</option><option>بدخشان</option><option>سمنگان</option><option>جوزجان</option>
+<option>فاریاب</option><option>سرپل</option><option>بامیان</option><option>دایکندی</option>
+<option>غور</option><option>فراه</option><option>نیمروز</option><option>اروزګان</option>
+<option>زابل</option><option>بادغیس</option>
 </select>
-<option>کابل</option><option>کندهار</option><option>هلمند</option>
-<option>هرات</option><option>بلخ</option><option>ننګرهار</option>
-</select>
+
+<br>
 <button onclick="login()">داخل شه</button>
 </div>
 
@@ -73,12 +51,21 @@ th{background:#006400;color:white;}
 
 <div class="box">
 
+<!-- 17 FIELDS -->
 <input id="serial" placeholder="مسلسل نمبر">
 <input id="doc" placeholder="د سند ګڼه">
 <input id="date" placeholder="نېټه">
 <input id="giver" placeholder="ورکوونکی">
 <input id="receiver" placeholder="اخیستونکی">
-<input id="deptField" placeholder="اړونده شعبه">
+<input id="department" placeholder="شعبه">
+<select id="category">
+<option value="">د جنس ډول</option>
+<option>فرنیچر</option>
+<option>مفروشات</option>
+<option>برقي وسایل</option>
+<option>لوښي</option>
+<option>متفرقه</option>
+</select>
 <input id="rank" placeholder="بست">
 <input id="item" placeholder="د جنس نوم">
 <input id="spec" placeholder="مشخصات">
@@ -102,11 +89,29 @@ th{background:#006400;color:white;}
 
 <input id="searchId" placeholder="ID لټون">
 <button onclick="searchItems()">Search</button>
+<button onclick="loadItems()">Reset</button>
 
 <table>
 <thead>
 <tr>
-<th>مسلسل</th><th>سند</th><th>نېټه</th><th>جنس</th><th>تعداد</th><th>ولایت</th><th>عمل</th>
+<th>مسلسل</th>
+<th>د سند ګڼه</th>
+<th>نېټه</th>
+<th>د ورکوونکی نوم</th>
+<th> د اخیستونکی نوم</th>
+<th>بست</th>
+<th>د جنس نوم</th>
+<th> د جنس مشخصات</th>
+<th>د سریال ګڼه</th>
+<th>د جنس مدرک (سرچینه)</th>
+<th>رنګ</th>
+<th>ډول</th>
+<th>تعداد</th>
+<th> واحد</th>
+<th>بیه</th>
+<th> ټولیزه بیه</th>
+<th>ولایت</th>
+<th>عمل</th>
 </tr>
 </thead>
 <tbody id="tbody"></tbody>
@@ -122,41 +127,45 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/fireba
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } 
 from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-const app = initializeApp({
+const firebaseApp = initializeApp({
 apiKey:"AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
 authDomain:"inventory-system-64d88.firebaseapp.com",
 projectId:"inventory-system-64d88"
 });
 
-const db = getFirestore(app);
+const db = getFirestore(firebaseApp);
 
 let currentProvince="";
 let isAdmin=false;
 let allItems=[];
 
-// LOGIN
+/* LOGIN */
 window.login=function(){
-let phone=phoneInput.value;
-let pin=pinInput.value;
+let phone=document.getElementById("phoneInput").value;
+let pin=document.getElementById("pinInput").value;
 
 if(phone==="0700000000" && pin==="9999"){
 isAdmin=true;
+currentProvince="";
 }else{
-currentProvince=province.value;
+currentProvince=document.getElementById("province").value;
 }
 
-loginBox.style.display="none";
-app.style.display="block";
+document.getElementById("loginBox").style.display="none";
+document.getElementById("app").style.display="block";
 
 loadItems();
 };
 
-// TOTAL
-qty.oninput=price.oninput=function(){
-total.value=(qty.value||0)*(price.value||0);
+/* TOTAL */
+document.getElementById("qty").oninput =
+document.getElementById("price").oninput=function(){
+let q=document.getElementById("qty").value||0;
+let p=document.getElementById("price").value||0;
+document.getElementById("total").value=q*p;
 };
 
-// ENTER NEXT
+/* ENTER NEXT */
 document.querySelectorAll("input").forEach((el,i,arr)=>{
 el.addEventListener("keydown",e=>{
 if(e.key==="Enter"){
@@ -166,9 +175,10 @@ arr[i+1]?.focus();
 });
 });
 
-// LOAD
+/* LOAD DATA */
 function loadItems(){
 onSnapshot(collection(db,"items"),snap=>{
+let tbody=document.getElementById("tbody");
 tbody.innerHTML="";
 allItems=[];
 
@@ -185,54 +195,63 @@ tbody.innerHTML+=`
 <td>${x.doc||""}</td>
 <td>${x.date||""}</td>
 <td>${x.item||""}</td>
+<td>${x.category||""}</td>
 <td>${x.qty||""}</td>
 <td>${x.province||""}</td>
-<td><button onclick="del('${x.idd}')">❌</button></td>
+<td><button onclick="delItem('${x.idd}')">❌</button></td>
 </tr>`;
 }
 });
 });
 }
 
-// ADD
+/* ADD ITEM */
 window.addItem=async function(){
+
 let id=prompt("ID ولیکه");
 if(!id) return;
 
 await addDoc(collection(db,"items"),{
-serial:serial.value,
-doc:doc.value,
-date:date.value,
-giver:giver.value,
-receiver:receiver.value,
-deptField:deptField.value,
-rank:rank.value,
-item:item.value,
-spec:spec.value,
-sn:sn.value,
-source:source.value,
-color:color.value,
-qty:qty.value,
-unit:unit.value,
-price:price.value,
-total:total.value,
-note:note.value,
+
+serial:document.getElementById("serial").value,
+doc:document.getElementById("doc").value,
+date:document.getElementById("date").value,
+giver:document.getElementById("giver").value,
+receiver:document.getElementById("receiver").value,
+department:document.getElementById("department").value,
+rank:document.getElementById("rank").value,
+item:document.getElementById("item").value,
+category:document.getElementById("category").value,
+spec:document.getElementById("spec").value,
+sn:document.getElementById("sn").value,
+source:document.getElementById("source").value,
+color:document.getElementById("color").value,
+qty:document.getElementById("qty").value,
+unit:document.getElementById("unit").value,
+price:document.getElementById("price").value,
+total:document.getElementById("total").value,
+note:document.getElementById("note").value,
+
 province:isAdmin ? prompt("ولایت ولیکه") : currentProvince,
 id:id
+
 });
+
 };
 
-// DELETE
-window.del=async function(id){
+/* DELETE */
+window.delItem=async function(id){
 if(prompt("پټ کوډ")!=="1234") return;
 await deleteDoc(doc(db,"items",id));
 };
 
-// SEARCH
+/* SEARCH */
 window.searchItems=function(){
+let tbody=document.getElementById("tbody");
 tbody.innerHTML="";
+
 allItems.forEach(x=>{
-if(x.id===searchId.value){
+if(x.id===document.getElementById("searchId").value){
 tbody.innerHTML+=`
 <tr>
 <td>${x.serial}</td>
