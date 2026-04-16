@@ -263,10 +263,21 @@ tbody.innerHTML+=`
 <td>${x.serial||""}</td>
 <td>${x.doc||""}</td>
 <td>${x.date||""}</td>
+<td>${x.giver||""}</td>
+<td>${x.receiver||""}</td>
+<td>${x.rank||""}</td>
 <td>${x.item||""}</td>
+<td>${x.spec||""}</td>
+<td>${x.sn||""}</td>
+<td>${x.source||""}</td>
+<td>${x.color||""}</td>
 <td>${x.qty||""}</td>
+<td>${x.unit||""}</td>
+<td>${x.price||""}</td>
+<td>${x.total||""}</td>
+<td>${x.category||""}</td>
 <td>${x.province||""}</td>
-<td></td>
+<td><button onclick="delItem('${x.idd}')">❌</button></td>
 </tr>`;
 
 // FILL FORM (17 BOXES)
