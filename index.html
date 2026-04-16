@@ -143,14 +143,23 @@ let currentEditId = "";
 
 /* LOGIN */
 window.login=function(){
+
 let phone=document.getElementById("phoneInput").value;
 let pin=document.getElementById("pinInput").value;
 
-if(phone==="0700000000" && pin==="9999"){
+const isCentral = (phone==="0700000000" && pin==="9999");
+
+if(isCentral){
 isAdmin=true;
-currentProvince="";
+currentProvince="مرکزي اداره";
 }else{
+isAdmin=false;
 currentProvince=document.getElementById("province").value;
+
+if(!currentProvince){
+alert("ولایت انتخاب کړه!");
+return;
+}
 }
 
 document.getElementById("loginBox").style.display="none";
@@ -164,7 +173,7 @@ document.getElementById("qty").oninput =
 document.getElementById("price").oninput=function(){
 let q=document.getElementById("qty").value||0;
 let p=document.getElementById("price").value||0;
-document.getElementById("total").value=q*p;
+document.getElementById("total").value = q * p;
 };
 
 /* ENTER NEXT */
@@ -196,9 +205,20 @@ tbody.innerHTML+=`
 <td>${x.serial||""}</td>
 <td>${x.doc||""}</td>
 <td>${x.date||""}</td>
+<td>${x.giver||""}</td>
+<td>${x.receiver||""}</td>
+<td>${x.department||""}</td>
+<td>${x.rank||""}</td>
 <td>${x.item||""}</td>
-<td>${x.category||""}</td>
+<td>${x.spec||""}</td>
+<td>${x.sn||""}</td>
+<td>${x.source||""}</td>
+<td>${x.color||""}</td>
 <td>${x.qty||""}</td>
+<td>${x.unit||""}</td>
+<td>${x.price||""}</td>
+<td>${x.total||""}</td>
+<td>${x.category||""}</td>
 <td>${x.province||""}</td>
 <td><button onclick="delItem('${x.idd}')">❌</button></td>
 </tr>`;
@@ -234,7 +254,7 @@ price:document.getElementById("price").value,
 total:document.getElementById("total").value,
 note:document.getElementById("note").value,
 
-province:isAdmin ? prompt("ولایت ولیکه") : currentProvince,
+province: currentProvince,
 id:id
 
 });
@@ -249,6 +269,8 @@ await deleteDoc(doc(db,"items",id));
 
 /* SEARCH */
 window.searchItems=function(){
+    let found = false;
+    document.querySelectorAll("#app input").forEach(i=>i.value="");
 
 let id=document.getElementById("searchId").value;
 let tbody=document.getElementById("tbody");
@@ -256,7 +278,9 @@ tbody.innerHTML="";
 
 allItems.forEach(x=>{
 if(x.id===id){
+found = true;
     currentEditId = x.idd;
+    
 
 // TABLE
 tbody.innerHTML+=`
@@ -280,6 +304,7 @@ tbody.innerHTML+=`
 <td>${x.province||""}</td>
 <td><button onclick="delItem('${x.idd}')">❌</button></td>
 </tr>`;
+
 
 // FILL FORM (17 BOXES)
 document.getElementById("serial").value = x.serial || "";
