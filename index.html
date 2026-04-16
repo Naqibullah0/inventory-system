@@ -14,6 +14,73 @@ button:hover{background:#004d00;}
 table{width:100%;border-collapse:collapse;margin-top:10px;}
 th,td{border:1px solid #ccc;padding:6px;text-align:center;font-size:13px;}
 th{background:#006400;color:white;}
+#newsList{
+list-style:none;
+/* 📱 MOBILE DESIGN */
+@media (max-width: 600px){
+
+/* ټول input او select */
+input, select{
+width: 100% !important;
+font-size:16px;
+}
+
+/* بټنونه */
+button{
+width: 100%;
+margin-top:5px;
+}
+
+/* box spacing */
+.box{
+margin:8px;
+padding:10px;
+}
+
+/* header */
+.header{
+font-size:18px;
+padding:10px;
+}
+
+/* table scroll */
+table{
+font-size:12px;
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+}
+
+/* search + news input */
+#newsInput, #searchId{
+width:100% !important;
+}
+
+/* خبرونه */
+#newsContainer{
+height:100px;
+}
+
+}
+padding:0;
+animation: scrollNews 10s linear infinite;
+}
+
+#newsList li{
+background:#f1f1f1;
+margin:5px;
+padding:6px;
+border-radius:5px;
+font-size:14px;
+display:flex;
+justify-content:space-between;
+}
+
+@keyframes scrollNews{
+0%{transform:translateY(100%);}
+100%{transform:translateY(-100%);}
+
+}
 </style>
 
 </head>
@@ -50,12 +117,14 @@ th{background:#006400;color:white;}
 <div id="app" style="display:none;">
 <div class="box">
 
-<h3>📢 خبرونه</h3>
+<h3>📢 رسمي خبرونه</h3>
 
 <input id="newsInput" placeholder="خبر ولیکه" style="width:60%">
 <button onclick="addNews()">اضافه کړه</button>
 
+<div id="newsContainer" style="height:120px; overflow:hidden; margin-top:10px;">
 <ul id="newsList"></ul>
+</div>
 
 </div>
 
@@ -344,11 +413,9 @@ document.getElementById("category").value = x.category || "";
 });
 
 };
-// NEWS SYSTEM
-
 let allNews = [];
 
-// LOAD NEWS
+// LOAD
 function loadNews(){
 let data = localStorage.getItem("news");
 allNews = data ? JSON.parse(data) : [];
@@ -359,13 +426,13 @@ list.innerHTML = "";
 allNews.forEach((n,i)=>{
 list.innerHTML += `
 <li>
-${n}
+<span>${n.text} <br><small>${n.date}</small></span>
 <button onclick="delNews(${i})">❌</button>
 </li>`;
 });
 }
 
-// ADD NEWS
+// ADD
 function addNews(){
 let txt = document.getElementById("newsInput").value;
 
@@ -374,15 +441,20 @@ alert("خبر ولیکه!");
 return;
 }
 
-allNews.push(txt);
+let now = new Date().toLocaleString();
+
+allNews.push({
+text: txt,
+date: now
+});
+
 localStorage.setItem("news", JSON.stringify(allNews));
 
 document.getElementById("newsInput").value="";
-
 loadNews();
 }
 
-// DELETE NEWS
+// DELETE
 function delNews(i){
 allNews.splice(i,1);
 localStorage.setItem("news", JSON.stringify(allNews));
