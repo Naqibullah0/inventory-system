@@ -48,6 +48,16 @@ th{background:#006400;color:white;}
 
 <!-- APP -->
 <div id="app" style="display:none;">
+<div class="box">
+
+<h3>📢 خبرونه</h3>
+
+<input id="newsInput" placeholder="خبر ولیکه" style="width:60%">
+<button onclick="addNews()">اضافه کړه</button>
+
+<ul id="newsList"></ul>
+
+</div>
 
 <div class="box">
 
@@ -334,8 +344,55 @@ document.getElementById("category").value = x.category || "";
 });
 
 };
+// NEWS SYSTEM
 
+let allNews = [];
+
+// LOAD NEWS
+function loadNews(){
+let data = localStorage.getItem("news");
+allNews = data ? JSON.parse(data) : [];
+
+let list = document.getElementById("newsList");
+list.innerHTML = "";
+
+allNews.forEach((n,i)=>{
+list.innerHTML += `
+<li>
+${n}
+<button onclick="delNews(${i})">❌</button>
+</li>`;
+});
+}
+
+// ADD NEWS
+function addNews(){
+let txt = document.getElementById("newsInput").value;
+
+if(!txt){
+alert("خبر ولیکه!");
+return;
+}
+
+allNews.push(txt);
+localStorage.setItem("news", JSON.stringify(allNews));
+
+document.getElementById("newsInput").value="";
+
+loadNews();
+}
+
+// DELETE NEWS
+function delNews(i){
+allNews.splice(i,1);
+localStorage.setItem("news", JSON.stringify(allNews));
+loadNews();
+}
+
+// START
+loadNews();
 </script>
+
 
 </body>
 </html>
