@@ -149,34 +149,36 @@ height:100px;
 <option>کاپیسا</option>
 <option>پنجشیر</option>
 <option>پروان</option>
-<option>میدان وردګ</option>
-<option>لوګر</option>
-<option>ننګرهار</option>
-<option>لغمان</option>
-<option>کنړ</option>
-<option>نورستان</option>
+<option>بامیان </option>
+<option>دایکندی</option>
 <option>پکتیا</option>
 <option>پکتیکا</option>
 <option>خوست</option>
+<option>لوګر</option>
+<option>میدان وردګ</option>
+<option>غزنی</option>
 <option>کندهار</option>
+<option>زابل</option>
 <option>هلمند</option>
 <option>روزګان</option>
 <option>هرات</option>
+<option>نیمروز</option>
 <option>فراه</option>
-<option>بادغیس</option>
 <option>غور</option>
+<option>بادغیس</option>
 <option>بلخ</option>
+<option>سمنګان</option>
+<option>سرپل</option>
 <option>جوزجان</option>
 <option>فاریاب</option>
-<option>سرپل</option>
+<option>کندوز</option>
+<option>بغلان</option>
 <option>تخار</option>
 <option>بدخشان</option>
-<option>بغلان</option>
-<option>کندز</option>
-<option>بامیان</option>
-<option>دایکندی</option>
-<option>نیمروز</option>
-<option>زابل</option>
+<option>ننګرهار</option>
+<option>کنړ</option>
+<option>لغمان</option>
+<option>نورستان</option>
 
 <!-- ✅ 35th -->
 <option>مرکزي اداره</option>
@@ -194,7 +196,10 @@ height:100px;
 <input id="date" placeholder="نېټه">
 <input id="giver" placeholder="ورکوونکی">
 <input id="receiver" placeholder="اخیستونکی">
-<input id="department" placeholder="شعبه">
+<input id="newDept" placeholder="نوی ریاست">
+<button onclick="addDept()">اضافه کړه</button>
+
+<select id="department"></select>
 
 <select id="category">
 <option value="">د جنس ډول</option>
@@ -234,6 +239,16 @@ height:100px;
 <div class="box">
 
 <input id="searchId" placeholder="ID لټون">
+<select id="searchDept"></select>
+
+<select id="searchSection">
+<option value="">ټول</option>
+<option>فرنیچر</option>
+<option>برقي وسایل</option>
+<option>مفروشات</option>
+<option>متفرقه</option>
+<option>لوښي</option>
+</select>
 
 <!-- 👇 selectونه دلته راځي -->
 <select id="searchDepartment">...</select>
@@ -248,6 +263,34 @@ height:100px;
 <button onclick="searchItems()">لټون</button>
 <button onclick="loadItems()">بېرته ټول</button>
 
+<h3>🏬 ګدام (Warehouse)</h3>
+<table>
+<thead>
+<tr>
+<th>نوم</th>
+<th>مشخصات</th>
+<th>تعداد</th>
+<th>واحد</th>
+<th>سند</th>
+<th>نېټه</th>
+<th>بیه</th>
+<th>موجود</th>
+</tr>
+</thead>
+<tbody id="wbody"></tbody>
+</table>
+
+<input id="w_name" placeholder="د جنس نوم">
+<input id="w_spec" placeholder="مشخصات">
+<input id="w_qty" type="number" placeholder="تعداد">
+<input id="w_unit" placeholder="واحد">
+<input id="w_doc" placeholder="د سند ګڼه">
+<input id="w_date" placeholder="نېټه">
+<input id="w_price" type="number" placeholder="فی دانه بیه">
+<input id="w_stock" type="number" placeholder="موجود تعداد">
+
+<br>
+<button onclick="addWarehouse()">ګدام ته اضافه کړه</button>
 <table>
 <thead>
 <tr>
@@ -300,6 +343,34 @@ let isAdmin=false;
 let allItems=[];
 let currentEditId = "";
 let dashboardMode = "province";
+let departments = JSON.parse(localStorage.getItem("depts")) || [];
+
+function loadDepts(){
+let sel = document.getElementById("department");
+sel.innerHTML = "";
+
+departments.forEach(d=>{
+sel.innerHTML += `<option>${d}</option>`;
+});
+}
+
+window.addDept = function(){
+
+let name = document.getElementById("newDept").value;
+if(!name) return;
+
+// یوازې مرکزي اداره اجازه لري
+if(!isAdmin){
+alert("صرف مرکزي اداره اجازه لري!");
+return;
+}
+
+departments.push(name);
+localStorage.setItem("depts", JSON.stringify(departments));
+
+document.getElementById("newDept").value="";
+loadDepts();
+};
 
 /* LOGIN */
 window.login = function () {
@@ -317,7 +388,7 @@ if (phone === "0700000000" && pin === "9999") {
 
 // 🏢 PROVINCE LOGIN SYSTEM
 else {
-let dashboardMode = "province";
+dashboardMode = "province";
     if (!province) {
         alert("ولایت انتخاب کړه!");
         return;
@@ -326,18 +397,40 @@ let dashboardMode = "province";
     // 🔑 هر ولایت خپل PIN لري
     const provincePins = {
         "کابل": "1111",
-        "هرات": "2222",
-        "ننګرهار": "3333",
-        "کندهار": "4444",
-        "بلخ": "5555",
-        "پکتیا": "6666",
-        "لوګر": "7777",
-        "غزني": "8888",
-        "کندز": "9991",
-        "بامیان": "9992",
-        "دایکندی": "9993",
-        "نیمروز": "9994",
-        "غور": "9995"
+        "کاپیسا": "2222",
+        "پنجشیر": "3333",
+        "پروان": "4444",
+        "بامیان": "5555",
+        "دایکندی": "6666",
+        "پکتیا": "7777",
+        "پکتیکا": "8888",
+        "خوست": "9999",
+        "لوګر": "0000",
+        "میدان وردګ": "1112",
+        "غزنی": "1113",
+        "کندهار": "1114",
+        "زابل": "1115",
+        "ارزګان": "1116",
+        "هلمند": "1117",
+        "هرات": "1118",
+        "نیمروز": "1119",
+        "فراه": "1110",
+        "غور": "1211",
+        "بادغیس": "1311",
+        "بلخ": "1411",
+        "سمنګان": "1511",
+        "سرپل": "1611",
+        "جوزجان": "1711",
+        "فاریاب": "1811",
+        "کندوز": "1911",
+        "بغلان": "1011",
+        "تخار": "1234",
+        "بدخشان": "5678",
+        "ننګرهار": "9012",
+        "کنړ": "3456",
+        "لغمان": "7890",
+        "نورستان": "4321",
+
         // نور ولایتونه هم اضافه کولی شې
     };
 
@@ -355,6 +448,7 @@ document.getElementById("loginBox").style.display = "none";
 document.getElementById("app").style.display = "block";
 
 loadItems();
+loadWarehouse();
 };
 
 /* ENTER NEXT */
@@ -453,6 +547,7 @@ date:document.getElementById("date").value,
 giver:document.getElementById("giver").value,
 receiver:document.getElementById("receiver").value,
 department:document.getElementById("department").value,
+section:document.getElementById("section").value,
 rank:document.getElementById("rank").value,
 item:document.getElementById("item").value,
 category:document.getElementById("category").value,
@@ -481,29 +576,29 @@ await deleteDoc(doc(db,"items",id));
 
 /* SEARCH */
 window.searchItems=function(){
-    let found = false;
-    
-    
+    let id = document.getElementById("searchId").value;
+let department = document.getElementById("searchDepartment").value;
+let category = document.getElementById("searchCategory").value;
 
-let id=document.getElementById("searchId").value;
-let tbody=document.getElementById("tbody");
-
-tbody.innerHTML="";
+let tbody = document.getElementById("tbody");
+tbody.innerHTML = "";
 
 allItems.forEach(x=>{
-if(x.idd===id){
-found = true;
-    currentEditId = x.idd;
 
+if(
+(!id || x.idd === id) &&
+(!department || x.department === department) &&
+(!category || x.category === category)
+){
 
-// TABLE
-tbody.innerHTML+=`
+tbody.innerHTML += `
 <tr>
 <td>${x.serial||""}</td>
 <td>${x.doc||""}</td>
 <td>${x.date||""}</td>
 <td>${x.giver||""}</td>
 <td>${x.receiver||""}</td>
+<td>${x.department||""}</td>
 <td>${x.rank||""}</td>
 <td>${x.item||""}</td>
 <td>${x.spec||""}</td>
@@ -517,34 +612,11 @@ tbody.innerHTML+=`
 <td>${x.category||""}</td>
 <td>${x.province||""}</td>
 <td><button onclick="delItem('${x.idd}')">❌</button></td>
-</tr>`;
-
-
-// FILL FORM (17 BOXES)
-document.getElementById("serial").value = x.serial || "";
-document.getElementById("doc").value = x.doc || "";
-document.getElementById("date").value = x.date || "";
-document.getElementById("giver").value = x.giver || "";
-document.getElementById("receiver").value = x.receiver || "";
-document.getElementById("department").value = x.department || "";
-document.getElementById("rank").value = x.rank || "";
-document.getElementById("item").value = x.item || "";
-document.getElementById("spec").value = x.spec || "";
-document.getElementById("sn").value = x.sn || "";
-document.getElementById("source").value = x.source || "";
-document.getElementById("color").value = x.color || "";
-document.getElementById("qty").value = x.qty || "";
-document.getElementById("unit").value = x.unit || "";
-document.getElementById("price").value = x.price || "";
-document.getElementById("total").value = x.total || "";
-document.getElementById("note").value = x.note || "";
-
-// category هم که اضافه کړې وه
-if(document.getElementById("category")){
-document.getElementById("category").value = x.category || "";
-}
+</tr>
+`;
 
 }
+
 });
 
 };
@@ -604,6 +676,60 @@ if(dashboardMode !== "central") return;
 document.getElementById("stats").innerHTML =
 "📊 ټول اجناس: " + allItems.length;
 }
+window.addWarehouse = async function(){
+
+await addDoc(collection(db,"warehouse"),{
+
+name: document.getElementById("w_name").value,
+spec: document.getElementById("w_spec").value,
+qty: document.getElementById("w_qty").value,
+unit: document.getElementById("w_unit").value,
+doc: document.getElementById("w_doc").value,
+date: document.getElementById("w_date").value,
+price: document.getElementById("w_price").value,
+stock: document.getElementById("w_stock").value,
+
+province: isAdmin ? "مرکزي اداره" : currentProvince
+
+});
+
+alert("ګدام ته اضافه شو ✅");
+
+};
+function loadWarehouse(){
+
+onSnapshot(collection(db,"warehouse"),snap=>{
+
+let wbody = document.getElementById("wbody");
+wbody.innerHTML = "";
+
+snap.forEach(d=>{
+
+let x = d.data();
+
+if (dashboardMode === "central" || x.province === currentProvince){
+
+wbody.innerHTML += `
+<tr>
+<td>${x.name || ""}</td>
+<td>${x.spec || ""}</td>
+<td>${x.qty || ""}</td>
+<td>${x.unit || ""}</td>
+<td>${x.doc || ""}</td>
+<td>${x.date || ""}</td>
+<td>${x.price || ""}</td>
+<td>${x.stock || ""}</td>
+</tr>
+`;
+
+}
+
+});
+
+});
+
+}
+
 </script>
 
 
