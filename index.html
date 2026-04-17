@@ -5,65 +5,73 @@
 <title>د اجناسو مدیریت سیستم</title>
 
 <style>
-body{font-family:Arial;background:#eef2f3;margin:0;direction:rtl;}
-.header{background:#006400;color:#fff;padding:15px;text-align:center;font-size:22px;}
-.box{background:#fff;margin:15px;padding:15px;border-radius:10px;}
-input,select{padding:6px;margin:4px;border:1px solid #ccc;border-radius:5px;width:140px;}
-button{background:#006400;color:white;padding:7px 12px;border:none;border-radius:5px;cursor:pointer;}
-button:hover{background:#004d00;}
-table{width:100%;border-collapse:collapse;margin-top:10px;}
-th,td{border:1px solid #ccc;padding:6px;text-align:center;font-size:13px;}
-th{background:#006400;color:white;}
+
+body{
+font-family:Arial;
+background:#eef2f3;
+margin:0;
+direction:rtl;
+}
+
+.header{
+background:#006400;
+color:#fff;
+padding:15px;
+text-align:center;
+font-size:22px;
+}
+
+.box{
+background:#fff;
+margin:15px;
+padding:15px;
+border-radius:10px;
+}
+
+input,select{
+padding:6px;
+margin:4px;
+border:1px solid #ccc;
+border-radius:5px;
+width:140px;
+}
+
+button{
+background:#006400;
+color:white;
+padding:7px 12px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#004d00;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th,td{
+border:1px solid #ccc;
+padding:6px;
+text-align:center;
+font-size:13px;
+}
+
+th{
+background:#006400;
+color:white;
+}
+
+/* NEWS */
 #newsList{
 list-style:none;
-/* 📱 MOBILE DESIGN */
-@media (max-width: 600px){
-
-/* ټول input او select */
-input, select{
-width: 100% !important;
-font-size:16px;
-}
-
-/* بټنونه */
-button{
-width: 100%;
-margin-top:5px;
-}
-
-/* box spacing */
-.box{
-margin:8px;
-padding:10px;
-}
-
-/* header */
-.header{
-font-size:18px;
-padding:10px;
-}
-
-/* table scroll */
-table{
-font-size:12px;
-display:block;
-overflow-x:auto;
-white-space:nowrap;
-}
-
-/* search + news input */
-#newsInput, #searchId{
-width:100% !important;
-}
-
-/* خبرونه */
-#newsContainer{
-height:100px;
-}
-
-}
 padding:0;
-animation: scrollNews 10s linear infinite;
+animation: scrollNews 20s linear infinite;
 }
 
 #newsList li{
@@ -71,16 +79,54 @@ background:#f1f1f1;
 margin:5px;
 padding:6px;
 border-radius:5px;
-font-size:14px;
 display:flex;
 justify-content:space-between;
 }
 
+/* ANIMATION */
 @keyframes scrollNews{
 0%{transform:translateY(100%);}
 100%{transform:translateY(-100%);}
+}
+
+/* 📱 MOBILE */
+@media (max-width:600px){
+
+input,select{
+width:100%;
+}
+
+button{
+width:100%;
+margin-top:5px;
+}
+
+.box{
+margin:8px;
+padding:10px;
+}
+
+.header{
+font-size:18px;
+}
+
+table{
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+font-size:12px;
+}
+
+#newsInput,#searchId{
+width:100%;
+}
+
+#newsContainer{
+height:100px;
+}
 
 }
+
 </style>
 
 </head>
@@ -115,20 +161,35 @@ justify-content:space-between;
 
 <!-- APP -->
 <div id="app" style="display:none;">
-<div class="box">
 
 <h3>📢 رسمي خبرونه</h3>
+<input id="newsInput">
+<button>...</button>
 
-<input id="newsInput" placeholder="خبر ولیکه" style="width:60%">
-<button onclick="addNews()">اضافه کړه</button>
+<div id="newsContainer">...</div>
 
-<div id="newsContainer" style="height:120px; overflow:hidden; margin-top:10px;">
-<ul id="newsList"></ul>
-</div>
+<!-- 17 FIELDS -->
+<input id="serial">
+<input id="doc">
+...
 
-</div>
+<button onclick="addItem()">اضافه کړه</button>
 
 <div class="box">
+
+<input id="searchId" placeholder="ID لټون">
+
+<!-- 👇 selectونه دلته راځي -->
+<select id="searchDepartment">...</select>
+<select id="searchCategory">...</select>
+
+<button onclick="searchItems()">Search</button>
+
+<table>...</table>
+
+</div>
+
+</div> <!-- ✅ app دلته بند کړه -->
 
 <!-- 17 FIELDS -->
 <input id="serial" placeholder="ګڼه ">
@@ -229,8 +290,21 @@ let pin=document.getElementById("pinInput").value;
 const isCentral = (phone==="0700000000" && pin==="9999");
 
 if(isCentral){
+    isAdmin = true;
+    currentProvince = "مرکزي اداره";
+}else{
+    isAdmin = false;
+    currentProvince = document.getElementById("province").value;
+
+    if(!currentProvince){
+        alert("ولایت انتخاب کړه!");
+        return;
+    }
+}
+
+if(isCentral){
 isAdmin=true;
-currentProvince="مرکزي اداره";
+currentProvince="مرکزی اداره";
 }else{
 isAdmin=false;
 currentProvince=document.getElementById("province").value;
@@ -276,7 +350,8 @@ snap.forEach(d=>{
 let x=d.data();
 x.idd=d.id;
 
-if(isAdmin || x.province===currentProvince){
+if(isAdmin){
+
 allItems.push(x);
 
 tbody.innerHTML+=`
@@ -301,6 +376,35 @@ tbody.innerHTML+=`
 <td>${x.province||""}</td>
 <td><button onclick="delItem('${x.idd}')">❌</button></td>
 </tr>`;
+
+}
+else if(x.province===currentProvince){
+
+allItems.push(x);
+
+tbody.innerHTML+=`
+<tr>
+<td>${x.serial||""}</td>
+<td>${x.doc||""}</td>
+<td>${x.date||""}</td>
+<td>${x.giver||""}</td>
+<td>${x.receiver||""}</td>
+<td>${x.department||""}</td>
+<td>${x.rank||""}</td>
+<td>${x.item||""}</td>
+<td>${x.spec||""}</td>
+<td>${x.sn||""}</td>
+<td>${x.source||""}</td>
+<td>${x.color||""}</td>
+<td>${x.qty||""}</td>
+<td>${x.unit||""}</td>
+<td>${x.price||""}</td>
+<td>${x.total||""}</td>
+<td>${x.category||""}</td>
+<td>${x.province||""}</td>
+<td><button onclick="delItem('${x.idd}')">❌</button></td>
+</tr>`;
+
 }
 });
 });
@@ -333,7 +437,7 @@ price:document.getElementById("price").value,
 total:document.getElementById("total").value,
 note:document.getElementById("note").value,
 
-province: currentProvince,
+province: isAdmin ? "مرکزي اداره" : currentProvince,
 id:id
 
 });
@@ -350,15 +454,19 @@ await deleteDoc(doc(db,"items",id));
 window.searchItems=function(){
     let found = false;
     document.querySelectorAll("#app input").forEach(i=>i.value="");
+    
 
 let id=document.getElementById("searchId").value;
 let tbody=document.getElementById("tbody");
+
 tbody.innerHTML="";
 
 allItems.forEach(x=>{
 if(x.id===id){
 found = true;
     currentEditId = x.idd;
+    
+    
     
 
 // TABLE
