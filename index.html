@@ -143,16 +143,43 @@ height:100px;
 <input id="pinInput" placeholder="پټ کوډ">
 
 <select id="province">
-<option value="">مرکزي اداره</option>
-<option>کابل</option><option>کاپیسا</option><option>پنجشیر</option><option>پروان</option>
-<option>میدان وردګ</option><option>لوګر</option><option>ننګرهار</option><option>لغمان</option>
-<option>کنړ</option><option>نورستان</option><option>پکتیا</option><option>پکتیکا</option>
-<option>خوست</option><option>کندهار</option><option>هلمند </option><option>روزګان</option>
-<option>هرات</option><option>فراه</option><option>بادغیس</option><option>غور</option>
-<option>بلخ</option><option>جوزجان</option><option>فاریاب</option><option>سرپل</option>
-<option>تخار</option><option>بدخشان</option><option>بغلان</option><option>کندز</option>
-<option>بامیان</option><option>دایکندی</option><option>نیمروز</option><option>اروزګان</option>
-<option>زابل</option><option>بادغیس</option>
+<option value="مرکزي اداره">مرکزي اداره</option>
+
+<option>کابل</option>
+<option>کاپیسا</option>
+<option>پنجشیر</option>
+<option>پروان</option>
+<option>میدان وردګ</option>
+<option>لوګر</option>
+<option>ننګرهار</option>
+<option>لغمان</option>
+<option>کنړ</option>
+<option>نورستان</option>
+<option>پکتیا</option>
+<option>پکتیکا</option>
+<option>خوست</option>
+<option>کندهار</option>
+<option>هلمند</option>
+<option>روزګان</option>
+<option>هرات</option>
+<option>فراه</option>
+<option>بادغیس</option>
+<option>غور</option>
+<option>بلخ</option>
+<option>جوزجان</option>
+<option>فاریاب</option>
+<option>سرپل</option>
+<option>تخار</option>
+<option>بدخشان</option>
+<option>بغلان</option>
+<option>کندز</option>
+<option>بامیان</option>
+<option>دایکندی</option>
+<option>نیمروز</option>
+<option>زابل</option>
+
+<!-- ✅ 35th -->
+<option>مرکزي اداره</option>
 </select>
 
 <br>
@@ -161,43 +188,14 @@ height:100px;
 
 <!-- APP -->
 <div id="app" style="display:none;">
-
-<h3>📢 رسمي خبرونه</h3>
-<input id="newsInput">
-<button>...</button>
-
-<div id="newsContainer">...</div>
-
-<!-- 17 FIELDS -->
-<input id="serial">
-<input id="doc">
-...
-
-<button onclick="addItem()">اضافه کړه</button>
-
-<div class="box">
-
-<input id="searchId" placeholder="ID لټون">
-
-<!-- 👇 selectونه دلته راځي -->
-<select id="searchDepartment">...</select>
-<select id="searchCategory">...</select>
-
-<button onclick="searchItems()">Search</button>
-
-<table>...</table>
-
-</div>
-
-</div> <!-- ✅ app دلته بند کړه -->
-
-<!-- 17 FIELDS -->
-<input id="serial" placeholder="ګڼه ">
+    <div id="stats" class="box"></div>
+    <input id="serial" placeholder="ګڼه">
 <input id="doc" placeholder="د سند ګڼه">
 <input id="date" placeholder="نېټه">
 <input id="giver" placeholder="ورکوونکی">
 <input id="receiver" placeholder="اخیستونکی">
 <input id="department" placeholder="شعبه">
+
 <select id="category">
 <option value="">د جنس ډول</option>
 <option>فرنیچر</option>
@@ -206,6 +204,7 @@ height:100px;
 <option>لوښي</option>
 <option>متفرقه</option>
 </select>
+
 <input id="rank" placeholder="بست">
 <input id="item" placeholder="د جنس نوم">
 <input id="spec" placeholder="مشخصات">
@@ -223,13 +222,31 @@ height:100px;
 <button onclick="addItem()">اضافه کړه</button>
 <button onclick="window.print()">چاپ</button>
 
+<h3>📢 رسمي خبرونه</h3>
+
+<input id="newsInput" placeholder="خبر ولیکه">
+<button onclick="addNews()">اضافه کړه</button>
+
+<div id="newsContainer" style="height:120px; overflow:hidden;">
+<ul id="newsList"></ul>
 </div>
 
 <div class="box">
 
 <input id="searchId" placeholder="ID لټون">
-<button onclick="searchItems()">Search</button>
-<button onclick="loadItems()">Reset</button>
+
+<!-- 👇 selectونه دلته راځي -->
+<select id="searchDepartment">...</select>
+<select id="searchCategory">
+<option value="">ټول ډولونه</option>
+<option>فرنیچر</option>
+<option>مفروشات</option>
+<option>برقي وسایل</option>
+<option>لوښي</option>
+<option>متفرقه</option>
+</select>
+<button onclick="searchItems()">لټون</button>
+<button onclick="loadItems()">بېرته ټول</button>
 
 <table>
 <thead>
@@ -237,18 +254,18 @@ height:100px;
 <th>مسلسل نمبر</th>
 <th>د سند ګڼه</th>
 <th>نېټه</th>
-<th> ورکوونکی </th>
-<th> اخیستونکی </th>
+<th>ورکوونکی</th>
+<th>اخیستونکی</th>
 <th>شعبه</th>
 <th>بست</th>
 <th>د جنس نوم</th>
-<th> مشخصات</th>
-<th>د سریال نمبر</th>
+<th>مشخصات</th>
+<th>سریال</th>
 <th>سرچینه</th>
-<th> رنګ</th>
-<th> تعداد</th>
+<th>رنګ</th>
+<th>تعداد</th>
 <th>واحد</th>
-<th>فیات</th>
+<th>بیه</th>
 <th>مجموعه</th>
 <th>ډول</th>
 <th>ولایت</th>
@@ -260,7 +277,9 @@ height:100px;
 
 </div>
 
-</div>
+</div> <!-- ✅ app دلته بند کړه -->
+
+
 
 <script type="module">
 
@@ -280,57 +299,66 @@ let currentProvince="";
 let isAdmin=false;
 let allItems=[];
 let currentEditId = "";
+let dashboardMode = "province";
 
 /* LOGIN */
-window.login=function(){
+window.login = function () {
 
-let phone=document.getElementById("phoneInput").value;
-let pin=document.getElementById("pinInput").value;
+let phone = document.getElementById("phoneInput").value;
+let pin = document.getElementById("pinInput").value;
+let province = document.getElementById("province").value;
 
-const isCentral = (phone==="0700000000" && pin==="9999");
-
-if(isCentral){
+// 🔐 CENTRAL LOGIN
+if (phone === "0700000000" && pin === "9999") {
     isAdmin = true;
     currentProvince = "مرکزي اداره";
-}else{
-    isAdmin = false;
-    currentProvince = document.getElementById("province").value;
+    dashboardMode = "central";   // 👈 دا اضافه کړه
+}
 
-    if(!currentProvince){
+// 🏢 PROVINCE LOGIN SYSTEM
+else {
+let dashboardMode = "province";
+    if (!province) {
         alert("ولایت انتخاب کړه!");
         return;
     }
+
+    // 🔑 هر ولایت خپل PIN لري
+    const provincePins = {
+        "کابل": "1111",
+        "هرات": "2222",
+        "ننګرهار": "3333",
+        "کندهار": "4444",
+        "بلخ": "5555",
+        "پکتیا": "6666",
+        "لوګر": "7777",
+        "غزني": "8888",
+        "کندز": "9991",
+        "بامیان": "9992",
+        "دایکندی": "9993",
+        "نیمروز": "9994",
+        "غور": "9995"
+        // نور ولایتونه هم اضافه کولی شې
+    };
+
+    if (pin !== provincePins[province]) {
+        alert("پټ کوډ غلط دی!");
+        return;
+    }
+
+    isAdmin = false;
+    currentProvince = province;
 }
 
-if(isCentral){
-isAdmin=true;
-currentProvince="مرکزی اداره";
-}else{
-isAdmin=false;
-currentProvince=document.getElementById("province").value;
-
-if(!currentProvince){
-alert("ولایت انتخاب کړه!");
-return;
-}
-}
-
-document.getElementById("loginBox").style.display="none";
-document.getElementById("app").style.display="block";
+// UI change
+document.getElementById("loginBox").style.display = "none";
+document.getElementById("app").style.display = "block";
 
 loadItems();
 };
 
-/* TOTAL */
-document.getElementById("qty").oninput =
-document.getElementById("price").oninput=function(){
-let q=document.getElementById("qty").value||0;
-let p=document.getElementById("price").value||0;
-document.getElementById("total").value = q * p;
-};
-
 /* ENTER NEXT */
-document.querySelectorAll("input").forEach((el,i,arr)=>{
+document.querySelectorAll("#app input").forEach((el,i,arr)=>{
 el.addEventListener("keydown",e=>{
 if(e.key==="Enter"){
 e.preventDefault();
@@ -347,10 +375,11 @@ tbody.innerHTML="";
 allItems=[];
 
 snap.forEach(d=>{
+updateStats();
 let x=d.data();
 x.idd=d.id;
 
-if(isAdmin){
+if (dashboardMode === "central") {
 
 allItems.push(x);
 
@@ -453,7 +482,7 @@ await deleteDoc(doc(db,"items",id));
 /* SEARCH */
 window.searchItems=function(){
     let found = false;
-    document.querySelectorAll("#app input").forEach(i=>i.value="");
+    
     
 
 let id=document.getElementById("searchId").value;
@@ -462,12 +491,10 @@ let tbody=document.getElementById("tbody");
 tbody.innerHTML="";
 
 allItems.forEach(x=>{
-if(x.id===id){
+if(x.idd===id){
 found = true;
     currentEditId = x.idd;
-    
-    
-    
+
 
 // TABLE
 tbody.innerHTML+=`
@@ -571,6 +598,12 @@ loadNews();
 
 // START
 loadNews();
+function updateStats(){
+if(dashboardMode !== "central") return;
+
+document.getElementById("stats").innerHTML =
+"📊 ټول اجناس: " + allItems.length;
+}
 </script>
 
 
