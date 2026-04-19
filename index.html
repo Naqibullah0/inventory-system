@@ -7,124 +7,93 @@
 <style>
 
 body{
-font-family:Arial;
-background:#eef2f3;
+font-family:Tahoma, Arial;
+background:linear-gradient(135deg,#e3f2fd,#f1f8e9);
 margin:0;
 direction:rtl;
 }
 
+/* HEADER */
 .header{
-background:#006400;
+background:linear-gradient(90deg,#006400,#00a86b);
 color:#fff;
-padding:15px;
+padding:18px;
 text-align:center;
-font-size:22px;
+font-size:24px;
+font-weight:bold;
+letter-spacing:1px;
+box-shadow:0 3px 10px rgba(0,0,0,0.2);
 }
 
+/* BOX */
 .box{
 background:#fff;
 margin:15px;
 padding:15px;
-border-radius:10px;
+border-radius:15px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
+transition:0.3s;
 }
 
+.box:hover{
+transform:translateY(-3px);
+}
+
+/* INPUT */
 input,select{
-padding:6px;
-margin:4px;
-border:1px solid #ccc;
-border-radius:5px;
-width:140px;
+padding:8px;
+margin:5px;
+border:1px solid #ddd;
+border-radius:8px;
+width:150px;
+transition:0.3s;
 }
 
+input:focus,select:focus{
+border-color:#00a86b;
+outline:none;
+box-shadow:0 0 5px rgba(0,168,107,0.4);
+}
+
+/* BUTTON */
 button{
-background:#006400;
+background:linear-gradient(90deg,#006400,#00a86b);
 color:white;
-padding:7px 12px;
+padding:8px 14px;
 border:none;
-border-radius:5px;
+border-radius:8px;
 cursor:pointer;
+transition:0.3s;
+font-weight:bold;
 }
 
 button:hover{
-background:#004d00;
+transform:scale(1.05);
+box-shadow:0 3px 10px rgba(0,0,0,0.2);
 }
 
+/* TABLE */
 table{
 width:100%;
 border-collapse:collapse;
 margin-top:10px;
-}
-
-th,td{
-border:1px solid #ccc;
-padding:6px;
-text-align:center;
-font-size:13px;
+border-radius:10px;
+overflow:hidden;
 }
 
 th{
 background:#006400;
 color:white;
+padding:8px;
 }
 
-/* NEWS */
-#newsList{
-list-style:none;
-padding:0;
-animation: scrollNews 20s linear infinite;
-}
-
-#newsList li{
-background:#f1f1f1;
-margin:5px;
+td{
 padding:6px;
-border-radius:5px;
-display:flex;
-justify-content:space-between;
+border-bottom:1px solid #eee;
 }
 
-/* ANIMATION */
-@keyframes scrollNews{
-0%{transform:translateY(100%);}
-100%{transform:translateY(-100%);}
-}
-
-/* 📱 MOBILE */
-@media (max-width:600px){
-
-input,select{
-width:100%;
-}
-
-button{
-width:100%;
-margin-top:5px;
-}
-
-.box{
-margin:8px;
-padding:10px;
-}
-
-.header{
-font-size:18px;
-}
-
-table{
-display:block;
-overflow-x:auto;
-white-space:nowrap;
-font-size:12px;
-}
-
-#newsInput,#searchId{
-width:100%;
-}
-
-#newsContainer{
-height:100px;
-}
-
+tr:hover{
+background:#f9f9f9;
 }
 
 </style>
@@ -325,9 +294,18 @@ height:100px;
 
 
 <script type="module">
+// 🔢 Auto Calculate Total
+document.getElementById("qty").addEventListener("input", calcTotal);
+document.getElementById("price").addEventListener("input", calcTotal);
 
+function calcTotal(){
+let qty = document.getElementById("qty").value;
+let price = document.getElementById("price").value;
+
+document.getElementById("total").value = qty * price;
+}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } 
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } 
 from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const firebaseApp = initializeApp({
@@ -497,7 +475,10 @@ tbody.innerHTML+=`
 <td>${x.total||""}</td>
 <td>${x.category||""}</td>
 <td>${x.province||""}</td>
-<td><button onclick="delItem('${x.idd}')">❌</button></td>
+<td>
+<button onclick="editItem('${x.idd}')">✏️</button>
+<button onclick="delItem('${x.idd}')">❌</button>
+</td>
 </tr>`;
 
 }
@@ -538,7 +519,13 @@ window.addItem=async function(){
 
 let id=prompt("ID ولیکه");
 if(!id) return;
+if(currentEditId){
 
+await deleteDoc(doc(db,"items",currentEditId));
+
+currentEditId = "";
+
+}
 await addDoc(collection(db,"items"),{
 
 serial:document.getElementById("serial").value,
@@ -547,7 +534,6 @@ date:document.getElementById("date").value,
 giver:document.getElementById("giver").value,
 receiver:document.getElementById("receiver").value,
 department:document.getElementById("department").value,
-section:document.getElementById("section").value,
 rank:document.getElementById("rank").value,
 item:document.getElementById("item").value,
 category:document.getElementById("category").value,
@@ -565,13 +551,69 @@ province: isAdmin ? "مرکزي اداره" : currentProvince,
 id:id
 
 });
+// 🧹 Clear form
+document.querySelectorAll("#app input").forEach(i=>i.value="");
+if(currentEditId){
 
+await updateDoc(doc(db,"items",currentEditId),{
+
+serial:document.getElementById("serial").value,
+doc:document.getElementById("doc").value,
+date:document.getElementById("date").value,
+giver:document.getElementById("giver").value,
+receiver:document.getElementById("receiver").value,
+department:document.getElementById("department").value,
+rank:document.getElementById("rank").value,
+item:document.getElementById("item").value,
+category:document.getElementById("category").value,
+spec:document.getElementById("spec").value,
+sn:document.getElementById("sn").value,
+source:document.getElementById("source").value,
+color:document.getElementById("color").value,
+qty:document.getElementById("qty").value,
+unit:document.getElementById("unit").value,
+price:document.getElementById("price").value,
+total:document.getElementById("total").value,
+note:document.getElementById("note").value
+
+});
+
+currentEditId = "";
+
+// 🧹 پاکول
+document.querySelectorAll("#app input").forEach(i=>i.value="");
+
+alert("✅ معلومات اپډیټ شول!");
+
+return;
+}
 };
 
+
 /* DELETE */
-window.delItem=async function(id){
-if(prompt("پټ کوډ")!=="1234") return;
-await deleteDoc(doc(db,"items",id));
+window.editItem = function(id){
+
+let item = allItems.find(x => x.idd === id);
+
+document.getElementById("serial").value = item.serial || "";
+document.getElementById("doc").value = item.doc || "";
+document.getElementById("date").value = item.date || "";
+document.getElementById("giver").value = item.giver || "";
+document.getElementById("receiver").value = item.receiver || "";
+document.getElementById("rank").value = item.rank || "";
+document.getElementById("item").value = item.item || "";
+document.getElementById("spec").value = item.spec || "";
+document.getElementById("sn").value = item.sn || "";
+document.getElementById("source").value = item.source || "";
+document.getElementById("color").value = item.color || "";
+document.getElementById("qty").value = item.qty || "";
+document.getElementById("unit").value = item.unit || "";
+document.getElementById("price").value = item.price || "";
+document.getElementById("total").value = item.total || "";
+
+currentEditId = id;
+
+alert("اوس معلومات بدل کړه او بیا Add کلیک کړه");
 };
 
 /* SEARCH */
@@ -693,7 +735,7 @@ province: isAdmin ? "مرکزي اداره" : currentProvince
 
 });
 
-alert("ګدام ته اضافه شو ✅");
+alert("✅ په بریالیتوب سره ثبت شو!");
 
 };
 function loadWarehouse(){
