@@ -5,6 +5,20 @@
 <title>له پیښو سره دمبارزې آمادګی ملی اداره هر اړخیزه ډیټابیس</title>
 
 <style>
+   #menuList > li{
+background:#f1f8e9;
+margin:6px;
+padding:10px;
+border-radius:8px;
+cursor:pointer;
+transition:0.3s;
+}
+
+#menuList li:hover{
+background:#00a86b;
+color:white;
+transform:scale(1.03);
+}
 
 body{
 font-family:Tahoma, Arial;
@@ -159,6 +173,133 @@ background:#f9f9f9;
 
 <!-- APP -->
 <div id="app" style="display:none;">
+    <!-- 🌳 CENTRAL MENU -->
+<div id="centralMenu" class="box" style="display:none;">
+
+<h3>🏢 مرکزي اداره</h3>
+
+<ul id="menuList" style="list-style:none; padding:0;">
+
+<li>1️⃣ د ادارې مقام</li>
+<li>2️⃣ د معاونیت مقام</li>
+<li>3️⃣ د مالی او اداری چارو لوی ریاست</li>
+<li>
+<span onclick="toggleOffice()" style="cursor:pointer;">
+4️⃣ د مقام د دفتر ریاست
+</span>
+
+<ul id="officeDept" style="display:none; list-style:none; padding-right:20px;">
+
+<li>📄 ۱ تقنینی سندونه</li>
+<li>📄 ۲ د اداری شوراء مصؤبی</li>
+<li>📄 ۳ د ارشیف اړوند مهم اسناد</li>
+<li>📄 ۴ د ټولو مراجعینو نوملړ (ورځنی، میاشتنی، ربعه واره)</li>
+
+</ul>
+</li>
+<li>
+<span onclick="toggleFinance()" style="cursor:pointer;">
+5️⃣ د مالی او اداری چارو ریاست
+</span>
+
+<ul id="financeDept" style="display:none; list-style:none; padding-right:20px;">
+
+<li>🚗 ۱ په مرکز او ولایتونو کی ټول عراده جات</li>
+<li>📦 ۲ په مرکز او ولایتونو کی ټول اجناس</li>
+<li>💰 ۳ عادی او انکشافی بودیجه</li>
+<li>📋 ۴ د هرې میاشتې په پای کې د ګدام اجناسو لیست</li>
+<li>♻️ ۵ د داغمه، مستعملو او جدیدو اجناسو لیست</li>
+<li>⛽ ۶ روغنیات (تیل او مبلین)</li>
+<li>🔧 ۷ د عراده جاتو ترمیم</li>
+<li>🛠️ ۸ د نصب سوو اجناسو لیست</li>
+<li>🎁 ۹ بلاعوضه کومکونو لیست</li>
+
+</ul>
+</li>   <!-- 👈 دا بندول 100% ضروري -->
+
+<li>
+<span style="cursor:pointer;" onclick="toggleWorkers()">
+6️⃣ د کارکوونکو ریاست
+</span>
+
+<ul id="workersDept" style="display:none; list-style:none; padding-right:20px;">
+
+<li>👥 ۱ تشکیل</li>
+<li>📝 ۲ تعینات</li>
+<li>📁 ۳ د کارکوونکو سوانح</li>
+<li>💻 ۴ د کمپیوټر او ورکشاپ څخه فارغ سوی کارمندان</li>
+
+</ul>
+</li>
+<li>
+<span style="cursor:pointer;" onclick="toggleIntl()">
+7️⃣ د نړیوالو اړیکو ریاست
+</span>
+
+<ul id="intlDept" style="display:none; list-style:none; padding-right:20px;">
+
+<li>📄 ۱ تفاهم لیکونه</li>
+<li>🤝 ۲ د سفیرانو او مؤسساتو سره ملاقاتونه</li>
+<li>✈️ ۳ خارجی سفرونه</li>
+
+</ul>
+</li>
+<li>
+<span style="cursor:pointer;" onclick="toggleMine()">
+8️⃣ د ماین پاکی ریاست
+</span>
+
+<ul id="mineDept" style="display:none; list-style:none; padding-right:20px;">
+
+<li>💣 ۱ خنثی سوی ماینونه او ناچاوده توکي</li>
+<li>📍 ۲ په مرکز او ولایتونو کی په ماین ککړی سیمی</li>
+<li>🧹 ۳ د کال په اوږدو کی پاکی سوی سیمی</li>
+<li>⚠️ ۴ د شهیدانو او زخمیانو تعداد</li>
+
+</ul>
+</li>
+<li>
+<span style="cursor:pointer;" onclick="toggleEmergency()">
+9️⃣ د بیړنیو حالاتو ریاست
+</span>
+
+<ul id="emergencyDept" style="display:none; list-style:none; padding-right:20px;">
+
+<li>📦 ۱ د خوراکی او غیر خوراکی توزیع سوی اجناسو لیست</li>
+<li>🚑 ۲ د نجات او جستجوی ټیم فعالیتونه او لاسته راوړنی</li>
+<li>🤝 ۳ د طبیعی پیښو د شهیدانو او زخمیانو کورنیو سره کومکونه</li>
+<li>🧑‍🤝‍🧑 ۴ د رضاکارانو نوملړ</li>
+<li>📋 ۵ د رضاکارانو اړوند معلومات او فعالیتونه</li>
+
+</ul>
+</li>
+<li>
+<span style="cursor:pointer;" onclick="toggleRisk()">
+🔟 د وقایه او خطر کمولو ریاست
+</span>
+
+<ul id="riskDept" style="display:none; list-style:none; padding-right:20px;">
+
+<li>🏗️ ۱ هغه پروژې چې تطبیق شوي وي</li>
+<li>📐 ۲ هغه پروژې چې ډیزاین او برآورد شوي وي</li>
+<li>📄 ۳ هغه پروژې چې ډیزاین او برآورد نه وي شوي</li>
+<li>⛽ ۴ د پټرول پمپونو، مارکیټونو او خطرناکو ځایونو د چک لیستونو لیست</li>
+<li>🌪️ ۵ د کال په اوږدو کې د طبیعی پیښو لیستونه</li>
+<li>🔥 ۶ د غیر طبیعی پیښو لیستونه</li>
+
+</ul>
+</li>
+<li>11️⃣ د پلان اوپالیسی ریاست</li>
+<li>12️⃣ د نظارت او ارزیابی ریاست</li>
+<li>13️⃣ د نشراتو ریاست</li>
+<li>14️⃣ د دعوت او ارشاد ریاست</li>
+<li>15️⃣ د تفتیش آمریت</li>
+<li>16️⃣ د تدارکاتو آمریت</li>
+<li>17️⃣ د اجناسو معتمد</li>
+
+</ul>
+
+</div>
     <div id="stats" class="box"></div>
     <input id="serial" placeholder="ګڼه">
 <input id="doc" placeholder="د سند ګڼه">
@@ -424,6 +565,9 @@ dashboardMode = "province";
 // UI change
 document.getElementById("loginBox").style.display = "none";
 document.getElementById("app").style.display = "block";
+if(isAdmin){
+document.getElementById("centralMenu").style.display = "block";
+}
 
 loadItems();
 loadWarehouse();
@@ -434,7 +578,13 @@ document.querySelectorAll("#app input").forEach((el,i,arr)=>{
 el.addEventListener("keydown",e=>{
 if(e.key==="Enter"){
 e.preventDefault();
-arr[i+1]?.focus();
+
+// یوازې visible inputs واخله
+let inputs = Array.from(document.querySelectorAll("#app input, #app select"))
+.filter(i => i.offsetParent !== null);
+
+let index = inputs.indexOf(el);
+inputs[index + 1]?.focus();
 }
 });
 });
@@ -737,41 +887,92 @@ province: isAdmin ? "مرکزي اداره" : currentProvince
 
 alert("✅ په بریالیتوب سره ثبت شو!");
 
-};
+
 function loadWarehouse(){
+  onSnapshot(collection(db,"warehouse"),snap=>{
+    let wbody = document.getElementById("wbody");
+    wbody.innerHTML = "";
 
-onSnapshot(collection(db,"warehouse"),snap=>{
+    snap.forEach(d=>{
+      let x = d.data();
 
-let wbody = document.getElementById("wbody");
-wbody.innerHTML = "";
+      if (dashboardMode === "central" || x.province === currentProvince){
+        wbody.innerHTML += `
+        <tr>
+          <td>${x.name || ""}</td>
+          <td>${x.spec || ""}</td>
+          <td>${x.qty || ""}</td>
+          <td>${x.unit || ""}</td>
+          <td>${x.doc || ""}</td>
+          <td>${x.date || ""}</td>
+          <td>${x.price || ""}</td>
+          <td>${x.stock || ""}</td>
+        </tr>`;
+      }
+    });
+  });
+}  // ✅ دا بندول ضروري دی
 
-snap.forEach(d=>{
+function toggleOffice(){
+let box = document.getElementById("officeDept");
 
-let x = d.data();
+if(!box) return;
 
-if (dashboardMode === "central" || x.province === currentProvince){
-
-wbody.innerHTML += `
-<tr>
-<td>${x.name || ""}</td>
-<td>${x.spec || ""}</td>
-<td>${x.qty || ""}</td>
-<td>${x.unit || ""}</td>
-<td>${x.doc || ""}</td>
-<td>${x.date || ""}</td>
-<td>${x.price || ""}</td>
-<td>${x.stock || ""}</td>
-</tr>
-`;
-
+box.style.display = (box.style.display === "block") ? "none" : "block";
 }
 
-});
+}
+window.toggleOffice = function () {
+    let box = document.getElementById("officeDept");
 
-});
+    if(!box) return;
 
+    if (box.style.display === "none" || box.style.display === "") {
+        box.style.display = "block";
+    } else {
+        box.style.display = "none";
+    }
+};
+function toggleFinance(){
+let box = document.getElementById("financeDept");
+
+if(!box) return;
+
+box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+window.toggleFinance = function () {
+    let box = document.getElementById("financeDept");
+    if (!box) return;
+
+    if (box.style.display === "block") {
+        box.style.display = "none";
+    } else {
+        box.style.display = "block";
+    }
+};
+function toggleWorkers(){
+let box = document.getElementById("workersDept");
+
+if(!box) return;
+
+box.style.display = (box.style.display === "block") ? "none" : "block";
 }
 
+window.toggleWorkers = toggleWorkers;
+function toggleIntl(){
+let box = document.getElementById("intlDept");
+if(!box) return;
+box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+window.toggleIntl = toggleIntl;
+
+
+function toggleMine(){
+let box = document.getElementById("mineDept");
+if(!box) return;
+box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+window.toggleMine = toggleMine;
 </script>
 
 
