@@ -289,12 +289,46 @@ background:#f9f9f9;
 
 </ul>
 </li>
-<li>11️⃣ د پلان اوپالیسی ریاست</li>
-<li>12️⃣ د نظارت او ارزیابی ریاست</li>
-<li>13️⃣ د نشراتو ریاست</li>
+<li>
+<span onclick="togglePlan()" style="cursor:pointer;">
+11️⃣ د پلان او پالیسی ریاست
+</span>
+
+<ul id="planDept" style="display:none; list-style:none; padding-right:20px;">
+<li>📄 ۱ قانون ، مقرره، کاری لارښود او لائحی</li>
+</ul>
+</li>
+<li>
+<span onclick="toggleMonitor()" style="cursor:pointer;">
+12️⃣ د نظارت او ارزیابی ریاست
+</span>
+
+<ul id="monitorDept" style="display:none; list-style:none; padding-right:20px;">
+<li>⚠️ ۱ د اصولو خلاف کارونه او سرغړونی</li>
+</ul>
+</li>
+<li>
+<span onclick="toggleMedia()" style="cursor:pointer;">
+13️⃣ د نشراتو ریاست
+</span>
+
+<ul id="mediaDept" style="display:none; list-style:none; padding-right:20px;">
+<li>🗓️ هفته واره فعالیتونه</li>
+<li>🗓️ میاشتنی فعالیتونه</li>
+<li>🗓️ دری میاشتنی (ربعوار) فعالیتونه</li>
+</ul>
+</li>
 <li>14️⃣ د دعوت او ارشاد ریاست</li>
 <li>15️⃣ د تفتیش آمریت</li>
-<li>16️⃣ د تدارکاتو آمریت</li>
+<li>
+<span onclick="toggleProcurement()" style="cursor:pointer;">
+16️⃣ د تدارکاتو آمریت
+</span>
+
+<ul id="procurementDept" style="display:none; list-style:none; padding-right:20px;">
+<li>📑 ۱ قراردادونه</li>
+</ul>
+</li>
 <li>17️⃣ د اجناسو معتمد</li>
 
 </ul>
@@ -973,6 +1007,39 @@ if(!box) return;
 box.style.display = (box.style.display === "block") ? "none" : "block";
 }
 window.toggleMine = toggleMine;
+function toggleEmergency(){
+let box = document.getElementById("emergencyDept");
+if(!box) return;
+box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+window.toggleEmergency = toggleEmergency;
+
+
+function toggleRisk(){
+let box = document.getElementById("riskDept");
+if(!box) return;
+box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+window.toggleRisk = toggleRisk;
+window.togglePlan = function(){
+let box = document.getElementById("planDept");
+box.style.display = (box.style.display === "block") ? "none" : "block";
+};
+
+window.toggleMonitor = function(){
+let box = document.getElementById("monitorDept");
+box.style.display = (box.style.display === "block") ? "none" : "block";
+};
+
+window.toggleMedia = function(){
+let box = document.getElementById("mediaDept");
+box.style.display = (box.style.display === "block") ? "none" : "block";
+};
+
+window.toggleProcurement = function(){
+let box = document.getElementById("procurementDept");
+box.style.display = (box.style.display === "block") ? "none" : "block";
+};
 </script>
 
 
