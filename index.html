@@ -203,9 +203,61 @@ background:#f9f9f9;
 <ul id="financeDept" style="display:none; list-style:none; padding-right:20px;">
 
 <li>🚗 ۱ په مرکز او ولایتونو کی دټولو  عراده جاتو مشخصات  </li>
-<li>📦 ۲ په مرکز او ولایتونو کی ټول اجناس</li>
+<li onclick="showExcel()">📦 ۲ په مرکز او ولایتونو کی ټول اجناس</li>
+<div id="excelBox" style="display:none;" class="box">
+<h3>📦 ټول اجناس (Excel شکل)</h3>
+
+<table id="excelTable">
+<thead>
+<tr>
+<th>کټه ګوري</th>
+<th>موقعیت</th>
+<th>مجموعه قیمت</th>
+<th>د جنس قیمت</th>
+<th>واحد</th>
+<th>تعداد</th>
+<th>رنګ</th>
+<th>سرچینه</th>
+<th>سریال نمبر</th>
+<th>مشخصات</th>
+<th>د جنس نوم</th>
+<th>ریاست</th>
+<th>مسؤل</th>
+<th>نېټه</th>
+<th>سند نمبر</th>
+<th>ثبت نمبر</th>
+</tr>
+
+<tr>
+<!-- FILTER ROW -->
+<th><input onkeyup="filterTable(0)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(1)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(2)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(3)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(4)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(5)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(6)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(7)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(8)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(9)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(10)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(11)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(12)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(13)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(14)" placeholder="فلتر"></th>
+<th><input onkeyup="filterTable(15)" placeholder="فلتر"></th>
+</tr>
+
+</thead>
+
+<tbody></tbody>
+</table>
+
+<br>
+<button onclick="addRow()">➕ نوی Row</button>
+</div>
 <li>💰 ۳ عادی او انکشافی بودیجه</li>
-<li>📋 ۴ د هرې میاشتې په پای کې په مرکزی او ولایتی ګدامونو کی خوراکی او غیر خوراکی د اجناسو لیست</li>
+<li>📋 ۴ د هرې میاشتې په پای کې په مرکزی او ولایتی ګدامونو کی د خوراکی او غیر خوراکی اجناسو لیست</li>
 <li>♻️ ۵  صرف په مرکز کی د داغمه، مستعملو او جدیدو اجناسو لیست</li>
 <li>⛽ ۶ صرف په مرکز کی د عراده جاتو  روغنیات (تیل او مبلین)</li>
 <li>🔧 ۷ صرف په مرکز کی د عراده جاتو  ترمیم او پررزجات</li>
@@ -281,7 +333,7 @@ background:#f9f9f9;
 <li>🏗️ ۱ د تطبیق سویو پروژو لیست </li>
 <li>📐 ۲   چې ډیزاین او برآورد سوی وي د هغو پروژو لیست</li>
 <li>📄 ۳   چې ډیزاین او برآورد یی نه وی سوی  د هغو پروژو لیست</li>
-<li>⛽ ۴  پټرول پمپونو، مارکیټونو او نورو خطرناکو ځایونو ته د ورسپارل سوی یو چک لیستونو لیست</li>
+<li>⛽ ۴  پټرول پمپونو، مارکیټونو او نورو اړونده مرکزونو ته د ورسپارل سوی یو چک لیستونو لیست</li>
 <li>🌪️ ۵ د کال په جریان کې د ټولو طبیعی پیښو لیست</li>
 <li>🔥 ۶ د کال په جریان کې د ټولو غیری طبیعی پیښو لیست</li>
 
@@ -321,7 +373,7 @@ background:#f9f9f9;
 </span>
 
 <ul id="procurementDept" style="display:none; list-style:none; padding-right:20px;">
-<li>📑 ۱ د کال په جریان کی د قرار دادونو لیست</li>
+<li>📑 ۱ د کال په جریان کی د هر نوع  قرار دادونو لیست</li>
 </ul>
 </li>
 <li>17️⃣ د اجناسو معتمد</li>
@@ -897,6 +949,7 @@ if(dashboardMode !== "central") return;
 document.getElementById("stats").innerHTML =
 "📊 ټول اجناس: " + allItems.length;
 }
+// ✅ ADD WAREHOUSE
 window.addWarehouse = async function(){
 
 await addDoc(collection(db,"warehouse"),{
@@ -915,32 +968,41 @@ province: isAdmin ? "مرکزي اداره" : currentProvince
 });
 
 alert("✅ په بریالیتوب سره ثبت شو!");
+};
 
-
+// ✅ LOAD WAREHOUSE (باید جلا وي)
 function loadWarehouse(){
-  onSnapshot(collection(db,"warehouse"),snap=>{
-    let wbody = document.getElementById("wbody");
-    wbody.innerHTML = "";
 
-    snap.forEach(d=>{
-      let x = d.data();
+onSnapshot(collection(db,"warehouse"),snap=>{
 
-      if (dashboardMode === "central" || x.province === currentProvince){
-        wbody.innerHTML += `
-        <tr>
-          <td>${x.name || ""}</td>
-          <td>${x.spec || ""}</td>
-          <td>${x.qty || ""}</td>
-          <td>${x.unit || ""}</td>
-          <td>${x.doc || ""}</td>
-          <td>${x.date || ""}</td>
-          <td>${x.price || ""}</td>
-          <td>${x.stock || ""}</td>
-        </tr>`;
-      }
-    });
-  });
-}  // ✅ دا بندول ضروري دی
+let wbody = document.getElementById("wbody");
+wbody.innerHTML = "";
+
+snap.forEach(d=>{
+
+let x = d.data();
+
+if (dashboardMode === "central" || x.province === currentProvince){
+
+wbody.innerHTML += `
+<tr>
+<td>${x.name || ""}</td>
+<td>${x.spec || ""}</td>
+<td>${x.qty || ""}</td>
+<td>${x.unit || ""}</td>
+<td>${x.doc || ""}</td>
+<td>${x.date || ""}</td>
+<td>${x.price || ""}</td>
+<td>${x.stock || ""}</td>
+</tr>
+`;
+
+}
+
+});
+
+});
+
 
 function toggleOffice(){
 let box = document.getElementById("officeDept");
@@ -1035,6 +1097,35 @@ window.toggleProcurement = function(){
 let box = document.getElementById("procurementDept");
 box.style.display = (box.style.display === "block") ? "none" : "block";
 };
+window.showExcel = function(){
+let box = document.getElementById("excelBox");
+box.style.display = (box.style.display === "block") ? "none" : "block";
+};
+
+function addRow(){
+let row = `
+<tr contenteditable="true">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>`;
+document.querySelector("#excelTable tbody").innerHTML += row;
+}
+function filterTable(colIndex){
+let input = event.target.value.toLowerCase();
+let rows = document.querySelectorAll("#excelTable tbody tr");
+
+rows.forEach(row=>{
+let cell = row.children[colIndex].innerText.toLowerCase();
+
+if(cell.includes(input)){
+row.style.display="";
+}else{
+row.style.display="none";
+}
+});
+}
 </script>
 
 
