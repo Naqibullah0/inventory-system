@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="ps" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>د اجناسو رسمي مدیریت سیستم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --color-primary:#0B5D3B;
+  --color-primary-dark:#073F27;
+  --color-primary-light:#E7F0EA;
+  --color-accent:#B68D40;
+  --color-accent-light:#F3EADA;
+  --color-bg:#F5F3EE;
+  --color-surface:#FFFFFF;
+  --color-text:#1F2A24;
+  --color-text-muted:#657168;
+  --color-border:#E1DFD6;
+  --color-danger:#B3261E;
+  --color-danger-light:#FBEAE9;
+  --color-success:#1E7D4F;
+  --radius-sm:6px;
+  --radius-lg:14px;
+  --shadow-pop:0 10px 30px rgba(7,63,39,.16);
+  --font:'Vazirmatn', Tahoma, Arial, sans-serif;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  font-family:var(--font);
+  background:var(--color-bg);
+  color:var(--color-text);
+  margin:0;
+  direction:rtl;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+button, input, select, textarea{ font-family:var(--font); }
+
+::selection{ background:var(--color-accent-light); }
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.hidden{ display:none !important; }
+.muted{ color:var(--color-text-muted); }
+.visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+
+button{
+  cursor:pointer;
+  border:none;
+  font-weight:600;
+  transition:background .15s ease, transform .05s ease;
+}
+button:active{ transform:translateY(1px); }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
+  outline:3px solid var(--color-accent);
+  outline-offset:1px;
+}
+
+.btn-primary{
+  background:var(--color-primary);
+  color:#fff;
+  padding:10px 18px;
+  border-radius:var(--radius-sm);
+  font-size:14px;
+}
+.btn-primary:hover{ background:var(--color-primary-dark); }
+.btn-primary:disabled{ background:#9db8ac; cursor:not-allowed; }
+
+.btn-secondary{
+  background:#fff;
+  color:var(--color-primary);
+  border:1.5px solid var(--color-primary);
+  padding:9px 16px;
+  border-radius:var(--radius-sm);
+  font-size:14px;
+}
+.btn-secondary:hover{ background:var(--color-primary-light); }
+
+.btn-danger{
+  background:var(--color-danger);
+  color:#fff;
+  padding:8px 14px;
+  border-radius:var(--radius-sm);
+  font-size:13px;
+}
+.btn-danger:hover{ background:#8f1f19; }
+
+.btn-icon{
+  background:transparent;
+  color:var(--color-text-muted);
+  padding:6px 8px;
+  border-radius:var(--radius-sm);
+  font-size:15px;
+}
+.btn-icon:hover{ background:var(--color-primary-light); color:var(--color-primary); }
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  margin-bottom:12px;
+}
+.field label{ font-size:13px; font-weight:600; color:var(--color-text-muted); }
+.field .req::after{ content:" *"; color:var(--color-danger); }
+
+input[type=text], input[type=number], input[type=password], input[type=email],
+input[type=date], input:not([type]), select, textarea{
+  padding:10px 12px;
+  border:1.5px solid var(--color-border);
+  border-radius:var(--radius-sm);
+  background:#fff;
+  font-size:14px;
+  color:var(--color-text);
+  width:100%;
+}
+input::placeholder, textarea::placeholder{ color:#9AA39C; }
+input:focus, select:focus, textarea:focus{ border-color:var(--color-primary); }
+
+.banner{
+  padding:11px 14px;
+  border-radius:var(--radius-sm);
+  font-size:13.5px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:14px;
+}
+.banner-error{ background:var(--color-danger-light); color:var(--color-danger); border:1px solid #f0c4c1; }
+.banner-success{ background:var(--color-primary-light); color:var(--color-primary-dark); border:1px solid #c7ddd0; }
+
+.spinner{
+  width:16px; height:16px;
+  border:2.5px solid rgba(255,255,255,.5);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  display:inline-block;
+  vertical-align:middle;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+.badge{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:100px;
+  font-size:12px;
+  font-weight:600;
+}
+.badge-admin{ background:var(--color-accent-light); color:#7a5d29; }
+.badge-province{ background:var(--color-primary-light); color:var(--color-primary-dark); }
+.badge-active{ background:#e5f4eb; color:var(--color-success); }
+.badge-inactive{ background:var(--color-danger-light); color:var(--color-danger); }
+
+/* ============================================================
+   LOGIN SCREEN
+   ============================================================ */
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(11,93,59,.08), transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(182,141,64,.10), transparent 40%),
+    var(--color-bg);
+}
+
+.login-card{
+  width:100%;
+  max-width:400px;
+  background:var(--color-surface);
+  border-radius:var(--radius-lg);
+  border:1px solid var(--color-border);
+  box-shadow:var(--shadow-pop);
+  padding:34px 30px 28px;
+}
+
+.login-emblem{
+  width:54px; height:54px;
+  border-radius:12px;
+  background:var(--color-primary);
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px;
+  margin:0 auto 14px;
+}
+
+.login-card h1{
+  font-size:19px;
+  text-align:center;
+  margin:0 0 2px;
+  color:var(--color-primary-dark);
+}
+.login-card p.sub{
+  text-align:center;
+  font-size:13px;
+  color:var(--color-text-muted);
+  margin:0 0 22px;
+}
+
+.pw-wrap{ position:relative; }
+.pw-wrap input{ padding-left:38px; }
+.pw-toggle{
+  position:absolute; left:6px; top:50%; transform:translateY(-50%);
+  background:transparent; color:var(--color-text-muted); font-size:12px;
+  padding:6px 8px;
+}
+
+.login-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:2px 0 16px;
+  font-size:12.5px;
+}
+.link-btn{
+  background:none; border:none; color:var(--color-primary); font-size:12.5px;
+  font-weight:600; padding:0;
+}
+.link-btn:hover{ text-decoration:underline; }
+
+.remember{ display:flex; align-items:center; gap:6px; color:var(--color-text-muted); }
+.remember input{ width:auto; }
+
+.security-note{
+  margin-top:20px;
+  padding-top:14px;
+  border-top:1px dashed var(--color-border);
+  font-size:11.5px;
+  color:var(--color-text-muted);
+  display:flex;
+  gap:6px;
+  align-items:flex-start;
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+#appShell{ display:flex; min-height:100vh; }
+
+.sidebar{
+  width:230px;
+  flex-shrink:0;
+  background:var(--color-primary-dark);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  padding:20px 14px;
+}
+.sidebar-brand{
+  display:flex; align-items:center; gap:10px;
+  padding:0 6px 20px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+  margin-bottom:16px;
+}
+.sidebar-brand .mark{
+  width:36px; height:36px; border-radius:9px;
+  background:rgba(255,255,255,.14);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+}
+.sidebar-brand div h2{ font-size:14px; margin:0; }
+.sidebar-brand div span{ font-size:11px; color:rgba(255,255,255,.6); }
+
+.nav-item{
+  display:flex; align-items:center; gap:10px;
+  padding:11px 12px;
+  border-radius:var(--radius-sm);
+  color:rgba(255,255,255,.78);
+  background:transparent;
+  width:100%;
+  text-align:right;
+  font-size:14px;
+  margin-bottom:3px;
+}
+.nav-item:hover{ background:rgba(255,255,255,.08); color:#fff; }
+.nav-item.active{ background:var(--color-accent); color:#2c2308; font-weight:700; }
+.nav-item .ic{ font-size:16px; width:18px; text-align:center; }
+
+.sidebar-footer{ margin-top:auto; padding-top:14px; border-top:1px solid rgba(255,255,255,.12); }
+.sidebar-user{ padding:8px 6px; font-size:12px; color:rgba(255,255,255,.7); line-height:1.6; }
+.sidebar-user b{ color:#fff; display:block; font-size:13px; }
+
+.main{ flex:1; min-width:0; display:flex; flex-direction:column; }
+
+.topbar{
+  background:var(--color-surface);
+  border-bottom:1px solid var(--color-border);
+  padding:14px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+  position:sticky; top:0; z-index:5;
+}
+.topbar h1{ font-size:18px; margin:0; color:var(--color-primary-dark); }
+.topbar .province-tag{ font-size:12.5px; color:var(--color-text-muted); margin-top:2px; }
+
+.content{ padding:22px 24px 60px; flex:1; }
+
+.panel{
+  display:none;
+}
+.panel.active{ display:block; }
+
+.card{
+  background:var(--color-surface);
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);
+  padding:18px 20px;
+}
+
+.section-title{
+  font-size:15px;
+  font-weight:700;
+  color:var(--color-primary-dark);
+  margin:0 0 14px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+/* dashboard */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(190px,1fr));
+  gap:14px;
+  margin-bottom:20px;
+}
+.stat-card{
+  background:var(--color-surface);
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);
+  padding:16px 18px;
+}
+.stat-card .label{ font-size:12.5px; color:var(--color-text-muted); margin-bottom:6px; }
+.stat-card .value{ font-size:24px; font-weight:800; color:var(--color-primary-dark); }
+.stat-card.accent{ border-top:3px solid var(--color-accent); }
+.stat-card.primary{ border-top:3px solid var(--color-primary); }
+
+.bar-row{ display:flex; align-items:center; gap:10px; margin-bottom:9px; font-size:13px; }
+.bar-row .bar-label{ width:110px; flex-shrink:0; color:var(--color-text-muted); }
+.bar-track{ flex:1; height:9px; background:var(--color-primary-light); border-radius:20px; overflow:hidden; }
+.bar-fill{ height:100%; background:var(--color-primary); border-radius:20px; }
+.bar-row .bar-count{ width:30px; text-align:left; font-weight:700; }
+
+.two-col{ display:grid; grid-template-columns:1.3fr 1fr; gap:16px; }
+@media (max-width:900px){ .two-col{ grid-template-columns:1fr; } }
+
+/* toolbar */
+.toolbar{
+  display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+  margin-bottom:16px;
+}
+.toolbar input, .toolbar select{ width:auto; min-width:150px; }
+.toolbar .grow{ flex:1; min-width:180px; }
+.count-pill{
+  background:var(--color-primary-light); color:var(--color-primary-dark);
+  padding:8px 14px; border-radius:100px; font-size:13px; font-weight:600;
+}
+
+/* table */
+.table-wrap{
+  overflow-x:auto;
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);
+}
+table{ width:100%; border-collapse:collapse; min-width:1100px; }
+thead th{
+  background:var(--color-primary-light);
+  color:var(--color-primary-dark);
+  font-size:12.5px;
+  padding:11px 8px;
+  text-align:center;
+  white-space:nowrap;
+  border-bottom:1px solid var(--color-border);
+  position:sticky; top:0;
+}
+tbody td{
+  padding:9px 8px;
+  text-align:center;
+  font-size:13px;
+  border-bottom:1px solid var(--color-border);
+  white-space:nowrap;
+}
+tbody tr:hover{ background:#FAFAF6; }
+tbody tr:last-child td{ border-bottom:none; }
+.empty-row td{ padding:32px 8px; color:var(--color-text-muted); font-size:13.5px; }
+
+.pagination{
+  display:flex; justify-content:center; align-items:center; gap:6px; margin-top:14px;
+}
+.pagination button{
+  background:#fff; border:1px solid var(--color-border); color:var(--color-text);
+  padding:6px 12px; border-radius:var(--radius-sm); font-size:13px;
+}
+.pagination button.active{ background:var(--color-primary); color:#fff; border-color:var(--color-primary); }
+.pagination button:disabled{ opacity:.4; cursor:not-allowed; }
+
+/* form grid (modal) */
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:0 14px;
+}
+@media (max-width:760px){ .form-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:520px){ .form-grid{ grid-template-columns:1fr; } }
+
+/* modal */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(15,26,20,.5);
+  display:flex; align-items:flex-start; justify-content:center;
+  padding:40px 16px; overflow-y:auto; z-index:50;
+}
+.modal{
+  background:var(--color-surface);
+  border-radius:var(--radius-lg);
+  width:100%; max-width:760px;
+  padding:22px 24px 24px;
+  box-shadow:var(--shadow-pop);
+}
+.modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.modal-head h3{ margin:0; font-size:16px; color:var(--color-primary-dark); }
+.modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:6px; border-top:1px solid var(--color-border); padding-top:16px; }
+
+/* news */
+.news-item{
+  background:var(--color-surface); border:1px solid var(--color-border);
+  border-radius:var(--radius-sm); padding:13px 15px; margin-bottom:10px;
+  display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
+}
+.news-item .txt{ font-size:14px; line-height:1.6; }
+.news-item .meta{ font-size:11.5px; color:var(--color-text-muted); margin-top:5px; }
+
+/* users table small */
+.role-select{ width:auto; }
+
+/* footer / empty state */
+.empty-state{ text-align:center; padding:40px 20px; color:var(--color-text-muted); }
+.empty-state .ic{ font-size:34px; margin-bottom:8px; }
+
+/* print */
+@media print{
+  .sidebar, .topbar, .toolbar, .pagination, #app-toast, .no-print{ display:none !important; }
+  .content{ padding:0; }
+  .table-wrap{ border:none; }
+}
+
+/* toast */
+#app-toast{
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:var(--color-primary-dark); color:#fff;
+  padding:11px 20px; border-radius:100px; font-size:13.5px;
+  box-shadow:var(--shadow-pop); z-index:100;
+  display:flex; align-items:center; gap:8px;
+}
+
+/* mobile */
+@media (max-width:880px){
+  #appShell{ flex-direction:column; }
+  .sidebar{
+    width:100%; flex-direction:row; align-items:center; overflow-x:auto;
+    padding:10px 12px; gap:4px;
+  }
+  .sidebar-brand{ border:none; margin:0; padding:0 8px 0 0; }
+  .sidebar-brand div span{ display:none; }
+  .nav-item{ width:auto; white-space:nowrap; }
+  .sidebar-footer{ margin:0; padding:0; border:none; }
+  .sidebar-user{ display:none; }
+  .content{ padding:16px; }
+  .form-grid{ grid-template-columns:1fr; }
+  .two-col{ grid-template-columns:1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN SCREEN
+     ============================================================ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-emblem">🛡️</div>
+    <h1>د اجناسو رسمي مدیریت سیستم</h1>
+    <p class="sub">مهرباني وکړئ خپل امنیتي حساب سره ننوځئ</p>
+
+    <div id="loginBanner"></div>
+
+    <form id="loginForm" autocomplete="on">
+      <div class="field">
+        <label class="req" for="emailInput">بریښنالیک</label>
+        <input id="emailInput" type="email" placeholder="name@example.com" autocomplete="username" required>
+      </div>
+
+      <div class="field">
+        <label class="req" for="pinInput">پټ نوم (Password)</label>
+        <div class="pw-wrap">
+          <input id="pinInput" type="password" placeholder="••••••••" autocomplete="current-password" required minlength="6">
+          <button type="button" class="pw-toggle" id="pwToggle">ښکاره</button>
+        </div>
+      </div>
+
+      <div class="login-meta">
+        <label class="remember"><input type="checkbox" id="rememberMe" checked> په یاد ولره</label>
+        <button type="button" class="link-btn" id="forgotBtn">پټ نوم مو هېر شوی؟</button>
+      </div>
+
+      <button type="submit" class="btn-primary" id="loginBtn" style="width:100%;">ننوتل</button>
+    </form>
+
+    <div class="security-note">
+      🔒 <span>دا سیستم Firebase امنیتي تصدیق کارروي؛ ستاسو ننوتل او معلومات په کوډ شوي بڼه لېږدول کیږي. له خپل حساب سره مرسته اداره کوونکي سره اړیکه ونیسئ.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
+<div id="appShell" class="hidden">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="mark">🛡️</div>
+      <div>
+        <h2>اجناس مدیریت</h2>
+        <span>رسمي سیستم</span>
+      </div>
+    </div>
+
+    <nav>
+      <button class="nav-item active" data-panel="dashboard"><span class="ic">📊</span> ډشبورډ</button>
+      <button class="nav-item" data-panel="inventory"><span class="ic">📦</span> اجناس</button>
+      <button class="nav-item" data-panel="news"><span class="ic">📢</span> رسمي خبرونه</button>
+      <button class="nav-item hidden" id="navUsers" data-panel="users"><span class="ic">👥</span> کاروونکي</button>
+      <button class="nav-item" data-panel="settings"><span class="ic">⚙️</span> تنظیمات</button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <b id="sbUserName">—</b>
+        <span id="sbUserRole">—</span>
+      </div>
+      <button class="nav-item" id="logoutBtn"><span class="ic">🚪</span> وتل</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="topbarTitle">ډشبورډ</h1>
+        <div class="province-tag" id="topbarSub">—</div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <span class="badge" id="roleBadge">—</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <section class="panel active" id="panel-dashboard">
+        <div class="stat-grid">
+          <div class="stat-card primary">
+            <div class="label">ټول ثبت شوي اجناس</div>
+            <div class="value" id="statCount">0</div>
+          </div>
+          <div class="stat-card accent">
+            <div class="label">ټول تعداد (واحدونه)</div>
+            <div class="value" id="statQty">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">ټوله ارزښت (بیه)</div>
+            <div class="value" id="statValue">0</div>
+          </div>
+          <div class="stat-card" id="statProvinceCard">
+            <div class="label">ولایتونه</div>
+            <div class="value" id="statProvinces">0</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="section-title">د جنس د ډول له مخې تحلیل</div>
+            <div id="categoryBars"></div>
+          </div>
+          <div class="card">
+            <div class="section-title">وروستي خبرونه</div>
+            <div id="dashNews"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INVENTORY -->
+      <section class="panel" id="panel-inventory">
+        <div class="card">
+          <div class="section-title">
+            د اجناسو لیست
+            <button class="btn-primary" id="openAddItemBtn">＋ نوی جنس اضافه کړه</button>
+          </div>
+
+          <div class="toolbar">
+            <input id="searchBox" class="grow" placeholder="🔎 لټون: نوم، سریال، سند ګڼه...">
+            <select id="filterCategory">
+              <option value="">ټول ډولونه</option>
+              <option>فرنیچر</option><option>مفروشات</option><option>برقي وسایل</option>
+              <option>لوښي</option><option>متفرقه</option>
+            </select>
+            <select id="filterProvince" class="hidden"></select>
+            <span class="count-pill" id="resultCount">0 ثبتونه</span>
+            <button class="btn-secondary" id="printBtn">🖨 چاپ</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>مسلسل نمبر</th><th>د سند ګڼه</th><th>نېټه</th><th>ورکوونکی</th>
+                  <th>اخیستونکی</th><th>شعبه</th><th>بست</th><th>د جنس نوم</th>
+                  <th>مشخصات</th><th>سریال نمبر</th><th>سرچینه</th><th>رنګ</th>
+                  <th>تعداد</th><th>واحد</th><th>بیه</th><th>مجموعه</th>
+                  <th>ډول</th><th>ولایت</th><th>عمل</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <tr class="empty-row"><td colspan="19">اجناس نشته</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </section>
+
+      <!-- NEWS -->
+      <section class="panel" id="panel-news">
+        <div class="card">
+          <div class="section-title">رسمي خبرونه او اعلانونه</div>
+
+          <div id="newsComposer" class="hidden" style="margin-bottom:16px;">
+            <div class="field">
+              <textarea id="newsInput" rows="3" placeholder="نوی رسمي خبر ولیکئ..."></textarea>
+            </div>
+            <button class="btn-primary" id="addNewsBtn">خبر خپور کړه</button>
+          </div>
+
+          <div id="newsList"></div>
+        </div>
+      </section>
+
+      <!-- USERS (admin only) -->
+      <section class="panel" id="panel-users">
+        <div class="card">
+          <div class="section-title">
+            د کاروونکو مدیریت
+            <button class="btn-primary" id="openAddUserBtn">＋ نوی کاروونکی جوړ کړه</button>
+          </div>
+          <div class="table-wrap">
+            <table style="min-width:700px;">
+              <thead>
+                <tr><th>نوم</th><th>بریښنالیک</th><th>رول</th><th>ولایت</th><th>حالت</th><th>عمل</th></tr>
+              </thead>
+              <tbody id="usersTbody">
+                <tr class="empty-row"><td colspan="6">...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="panel" id="panel-settings">
+        <div class="card" style="max-width:460px;">
+          <div class="section-title">د حساب معلومات</div>
+          <p class="muted" style="font-size:13.5px;">
+            بریښنالیک: <b id="setEmail">—</b><br>
+            رول: <b id="setRole">—</b><br>
+            ولایت: <b id="setProvince">—</b>
+          </p>
+
+          <div class="section-title" style="margin-top:18px;">پټ نوم بدل کړئ</div>
+          <div id="pwBanner"></div>
+          <div class="field">
+            <label class="req">اوسنی پټ نوم</label>
+            <input id="curPw" type="password" autocomplete="current-password">
+          </div>
+          <div class="field">
+            <label class="req">نوی پټ نوم</label>
+            <input id="newPw" type="password" autocomplete="new-password" minlength="6">
+          </div>
+          <div class="field">
+            <label class="req">د نوي پټ نوم تکرار</label>
+            <input id="newPw2" type="password" autocomplete="new-password" minlength="6">
+          </div>
+          <button class="btn-primary" id="changePwBtn">پټ نوم خوندي کړه</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ITEM MODAL -->
+<div class="modal-overlay hidden" id="itemModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="itemModalTitle">نوی جنس اضافه کړه</h3>
+      <button class="btn-icon" id="closeItemModal">✕</button>
+    </div>
+    <div id="itemFormBanner"></div>
+    <form id="itemForm">
+      <div class="form-grid">
+        <div class="field"><label class="req">مسلسل نمبر</label><input id="f_serial" required></div>
+        <div class="field"><label class="req">د سند ګڼه</label><input id="f_doc" required></div>
+        <div class="field"><label class="req">نېټه</label><input id="f_date" type="date" required></div>
+        <div class="field"><label>ورکوونکی</label><input id="f_giver"></div>
+        <div class="field"><label>اخیستونکی</label><input id="f_receiver"></div>
+        <div class="field"><label>شعبه</label><input id="f_department"></div>
+        <div class="field"><label>بست</label><input id="f_rank"></div>
+        <div class="field"><label class="req">د جنس نوم</label><input id="f_item" required></div>
+        <div class="field">
+          <label class="req">د جنس ډول</label>
+          <select id="f_category" required>
+            <option value="">- انتخاب -</option>
+            <option>فرنیچر</option><option>مفروشات</option><option>برقي وسایل</option>
+            <option>لوښي</option><option>متفرقه</option>
+          </select>
+        </div>
+        <div class="field"><label>مشخصات</label><input id="f_spec"></div>
+        <div class="field"><label>سریال نمبر</label><input id="f_sn"></div>
+        <div class="field"><label>سرچینه</label><input id="f_source"></div>
+        <div class="field"><label>رنګ</label><input id="f_color"></div>
+        <div class="field"><label class="req">تعداد</label><input id="f_qty" type="number" min="0" step="1" required></div>
+        <div class="field"><label>واحد</label><input id="f_unit"></div>
+        <div class="field"><label class="req">بیه (فی واحد)</label><input id="f_price" type="number" min="0" step="0.01" required></div>
+        <div class="field"><label>مجموعه</label><input id="f_total" readonly></div>
+        <div class="field" id="f_province_wrap"><label>ولایت</label><input id="f_province" readonly></div>
+        <div class="field" style="grid-column:1/-1;"><label>کتنې</label><textarea id="f_note" rows="2"></textarea></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="cancelItemBtn">لغوه کړه</button>
+        <button type="submit" class="btn-primary" id="saveItemBtn">خوندي کړه</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="modal-overlay hidden" id="userModalOverlay">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-head">
+      <h3>نوی کاروونکی جوړ کړه</h3>
+      <button class="btn-icon" id="closeUserModal">✕</button>
+    </div>
+    <div id="userFormBanner"></div>
+    <form id="userForm">
+      <div class="field"><label class="req">بشپړ نوم</label><input id="u_name" required></div>
+      <div class="field"><label class="req">بریښنالیک</label><input id="u_email" type="email" required></div>
+      <div class="field"><label class="req">لومړنی پټ نوم (لږترلږه ۶ توري)</label><input id="u_pass" type="password" minlength="6" required></div>
+      <div class="field">
+        <label class="req">رول</label>
+        <select id="u_role" required>
+          <option value="province">د ولایت کاروونکی</option>
+          <option value="admin">مرکزي اداره کوونکی</option>
+        </select>
+      </div>
+      <div class="field" id="u_province_wrap">
+        <label class="req">ولایت</label>
+        <select id="u_province"></select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="cancelUserBtn">لغوه کړه</button>
+        <button type="submit" class="btn-primary" id="saveUserBtn">جوړ کړه</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="app-toast" class="hidden"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
+  setPersistence, browserLocalPersistence, browserSessionPersistence,
+  sendPasswordResetEmail, updatePassword, reauthenticateWithCredential,
+  EmailAuthProvider, createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs,
+  onSnapshot, deleteDoc, updateDoc, query, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ============================================================
+   FIREBASE CONFIG  — replace with your own project's config
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyDQG_BNOSJievJwmpOU96pZcPnWzQW-Ebo",
+  authDomain: "inventory-system-64d88.firebaseapp.com",
+  projectId: "inventory-system-64d88"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Secondary app instance so creating a new user (admin action) never
+// disturbs the currently signed-in admin's session.
+const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+const secondaryAuth = getAuth(secondaryApp);
+
+const PROVINCES = [
+  "کابل","کاپیسا","پنجشیر","پروان","میدان وردګ","لوګر","ننګرهار","لغمان",
+  "کنړ","نورستان","پکتیا","پکتیکا","خوست","کندهار","هلمند","اروزګان",
+  "هرات","فراه","بادغیس","غور","بلخ","جوزجان","فاریاب","سرپل",
+  "تخار","بدخشان","بغلان","کندز","بامیان","دایکندی","نیمروز","زابل"
+];
+
+let currentUser = null;   // Firebase auth user
+let profile = null;       // { role, province, displayName, active }
+let allItems = [];
+let allUsers = [];
+let allNews = [];
+let currentPage = 1;
+const PAGE_SIZE = 10;
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function toast(msg){
+  const t = document.getElementById("app-toast");
+  t.textContent = msg;
+  t.classList.remove("hidden");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=> t.classList.add("hidden"), 3200);
+}
+
+function banner(elId, msg, type){
+  const el = document.getElementById(elId);
+  if(!msg){ el.innerHTML = ""; return; }
+  el.innerHTML = `<div class="banner banner-${type}">${type==='error'?'⚠️':'✅'} ${msg}</div>`;
+}
+
+function setBtnLoading(btn, loading, labelWhenIdle){
+  btn.disabled = loading;
+  btn.innerHTML = loading ? `<span class="spinner"></span> ...` : labelWhenIdle;
+}
+
+function friendlyAuthError(code){
+  const map = {
+    "auth/invalid-email":"بریښنالیک سم ندی.",
+    "auth/user-disabled":"دا حساب غیرفعال شوی دی.",
+    "auth/user-not-found":"داسې حساب نشته.",
+    "auth/wrong-password":"پټ نوم سم ندی.",
+    "auth/invalid-credential":"بریښنالیک یا پټ نوم سم ندی.",
+    "auth/too-many-requests":"ډیرې ناکامې هڅې وشوې؛ لطفاً یو څه وخت وروسته بیا هڅه وکړئ.",
+    "auth/email-already-in-use":"دا بریښنالیک مخکې ثبت شوی دی.",
+    "auth/weak-password":"پټ نوم ډیر ساده دی، لږترلږه ۶ توري وکاروئ."
+  };
+  return map[code] || "یو تېروتنه رامنځته شوه. بیا هڅه وکړئ.";
+}
+
+function fmtMoney(n){
+  const v = Number(n)||0;
+  return v.toLocaleString("en-US");
+}
+
+/* ============================================================
+   AUTH — LOGIN / LOGOUT / PASSWORD RESET
+   ============================================================ */
+document.getElementById("pwToggle").onclick = () => {
+  const inp = document.getElementById("pinInput");
+  const btn = document.getElementById("pwToggle");
+  const show = inp.type === "password";
+  inp.type = show ? "text" : "password";
+  btn.textContent = show ? "پټ کړه" : "ښکاره";
+};
+
+document.getElementById("forgotBtn").onclick = async () => {
+  const email = document.getElementById("emailInput").value.trim();
+  if(!email){ banner("loginBanner","لومړی خپل بریښنالیک ولیکئ.","error"); return; }
+  try{
+    await sendPasswordResetEmail(auth, email);
+    banner("loginBanner","د پټ نوم بیارغونې لینک ستاسو بریښنالیک ته ولېږل شو.","success");
+  }catch(e){
+    banner("loginBanner", friendlyAuthError(e.code), "error");
+  }
+};
+
+document.getElementById("loginForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const email = document.getElementById("emailInput").value.trim();
+  const pass = document.getElementById("pinInput").value;
+  const remember = document.getElementById("rememberMe").checked;
+  const btn = document.getElementById("loginBtn");
+  banner("loginBanner","",null);
+  setBtnLoading(btn, true, "ننوتل");
+
+  try{
+    await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+    await signInWithEmailAndPassword(auth, email, pass);
+    // onAuthStateChanged will finish the flow (profile check + UI switch)
+  }catch(err){
+    banner("loginBanner", friendlyAuthError(err.code), "error");
+    setBtnLoading(btn, false, "ننوتل");
+  }
+});
+
+document.getElementById("logoutBtn").onclick = async () => {
+  await signOut(auth);
+};
+
+onAuthStateChanged(auth, async (user) => {
+  const loginBtn = document.getElementById("loginBtn");
+  if(!user){
+    currentUser = null; profile = null;
+    document.getElementById("appShell").classList.add("hidden");
+    document.getElementById("loginScreen").classList.remove("hidden");
+    setBtnLoading(loginBtn, false, "ننوتل");
+    return;
+  }
+
+  currentUser = user;
+  const snap = await getDoc(doc(db,"users",user.uid));
+
+  if(!snap.exists() || snap.data().active === false){
+    banner("loginBanner", snap.exists() ? "ستاسو حساب غیرفعال شوی دی. له اداري سره اړیکه ونیسئ." : "ستاسو حساب لا تنظیم شوی ندی. له اداري سره اړیکه ونیسئ.", "error");
+    await signOut(auth);
+    setBtnLoading(loginBtn, false, "ننوتل");
+    return;
+  }
+
+  profile = snap.data();
+  setBtnLoading(loginBtn, false, "ننوتل");
+  enterApp();
+});
+
+/* ============================================================
+   ENTER APP / NAVIGATION
+   ============================================================ */
+function enterApp(){
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("appShell").classList.remove("hidden");
+
+  const isAdmin = profile.role === "admin";
+
+  document.getElementById("sbUserName").textContent = profile.displayName || currentUser.email;
+  document.getElementById("sbUserRole").textContent = isAdmin ? "مرکزي اداره کوونکی" : `د ${profile.province} استازی`;
+  document.getElementById("roleBadge").textContent = isAdmin ? "مرکزي اداره" : profile.province;
+  document.getElementById("roleBadge").className = "badge " + (isAdmin ? "badge-admin" : "badge-province");
+  document.getElementById("statProvinceCard").style.display = isAdmin ? "" : "none";
+  document.getElementById("navUsers").classList.toggle("hidden", !isAdmin);
+  document.getElementById("newsComposer").classList.toggle("hidden", !isAdmin);
+  document.getElementById("filterProvince").classList.toggle("hidden", !isAdmin);
+  document.getElementById("f_province_wrap").querySelector("#f_province").value = isAdmin ? "مرکزي اداره" : profile.province;
+
+  document.getElementById("setEmail").textContent = currentUser.email;
+  document.getElementById("setRole").textContent = isAdmin ? "مرکزي اداره کوونکی" : "د ولایت کاروونکی";
+  document.getElementById("setProvince").textContent = isAdmin ? "—" : profile.province;
+
+  if(isAdmin){
+    const fp = document.getElementById("filterProvince");
+    fp.innerHTML = `<option value="">ټول ولایتونه</option>` + PROVINCES.map(p=>`<option>${p}</option>`).join("");
+  }
+
+  buildProvinceSelect();
+  listenItems();
+  listenNews();
+  if(isAdmin) listenUsers();
+}
+
+document.querySelectorAll(".nav-item[data-panel]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav-item[data-panel]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    const panelId = "panel-"+btn.dataset.panel;
+    document.getElementById(panelId).classList.add("active");
+    const titles = {dashboard:"ډشبورډ", inventory:"د اجناسو لیست", news:"رسمي خبرونه", users:"د کاروونکو مدیریت", settings:"تنظیمات"};
+    document.getElementById("topbarTitle").textContent = titles[btn.dataset.panel];
+    document.getElementById("topbarSub").textContent = profile.role==="admin" ? "مرکزي اداره" : profile.province;
+  });
+});
+
+/* ============================================================
+   INVENTORY — LIVE DATA, RENDER, SEARCH, FILTER, PAGINATION
+   ============================================================ */
+function listenItems(){
+  const q = query(collection(db,"items"), orderBy("createdAt","desc"));
+  onSnapshot(q, snap=>{
+    allItems = [];
+    snap.forEach(d=>{
+      const x = d.data(); x.idd = d.id;
+      if(profile.role==="admin" || x.province===profile.province) allItems.push(x);
+    });
+    currentPage = 1;
+    renderItems();
+    renderDashboard();
+  }, err=>{
+    console.error(err);
+    toast("د معلوماتو په اخیستلو کې ستونزه رامنځته شوه.");
+  });
+}
+
+function getFilteredItems(){
+  const term = document.getElementById("searchBox").value.trim().toLowerCase();
+  const cat = document.getElementById("filterCategory").value;
+  const prov = document.getElementById("filterProvince").value;
+
+  return allItems.filter(x=>{
+    if(cat && x.category!==cat) return false;
+    if(prov && x.province!==prov) return false;
+    if(term){
+      const hay = [x.item,x.serial,x.doc,x.sn,x.giver,x.receiver].join(" ").toLowerCase();
+      if(!hay.includes(term)) return false;
+    }
+    return true;
+  });
+}
+
+function renderItems(){
+  const filtered = getFilteredItems();
+  document.getElementById("resultCount").textContent = `${filtered.length} ثبتونه`;
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  if(currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage-1)*PAGE_SIZE;
+  const pageItems = filtered.slice(start, start+PAGE_SIZE);
+
+  const tbody = document.getElementById("tbody");
+  if(pageItems.length===0){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="19">هیڅ ثبت ونه موندل شو</td></tr>`;
+  }else{
+    tbody.innerHTML = pageItems.map(x=>`
+      <tr>
+        <td>${x.serial||""}</td><td>${x.doc||""}</td><td>${x.date||""}</td>
+        <td>${x.giver||""}</td><td>${x.receiver||""}</td><td>${x.department||""}</td>
+        <td>${x.rank||""}</td><td>${x.item||""}</td><td>${x.spec||""}</td>
+        <td>${x.sn||""}</td><td>${x.source||""}</td><td>${x.color||""}</td>
+        <td>${x.qty||""}</td><td>${x.unit||""}</td><td>${fmtMoney(x.price)}</td>
+        <td>${fmtMoney(x.total)}</td><td>${x.category||""}</td><td>${x.province||""}</td>
+        <td>
+          <button class="btn-icon" title="سمول" onclick="window.editItem('${x.idd}')">✏️</button>
+          <button class="btn-icon" title="ړنګول" onclick="window.deleteItem('${x.idd}')">🗑️</button>
+        </td>
+      </tr>`).join("");
+  }
+
+  const pag = document.getElementById("pagination");
+  pag.innerHTML = "";
+  if(totalPages>1){
+    pag.innerHTML += `<button ${currentPage===1?'disabled':''} onclick="window.gotoPage(${currentPage-1})">‹</button>`;
+    for(let i=1;i<=totalPages;i++){
+      pag.innerHTML += `<button class="${i===currentPage?'active':''}" onclick="window.gotoPage(${i})">${i}</button>`;
+    }
+    pag.innerHTML += `<button ${currentPage===totalPages?'disabled':''} onclick="window.gotoPage(${currentPage+1})">›</button>`;
+  }
+}
+window.gotoPage = (p)=>{ currentPage=p; renderItems(); };
+
+["searchBox"].forEach(id=> document.getElementById(id).addEventListener("input", ()=>{currentPage=1; renderItems();}) );
+["filterCategory","filterProvince"].forEach(id=> document.getElementById(id).addEventListener("change", ()=>{currentPage=1; renderItems();}) );
+
+document.getElementById("printBtn").onclick = ()=> window.print();
+
+/* ---- Dashboard ---- */
+function renderDashboard(){
+  const items = allItems;
+  document.getElementById("statCount").textContent = items.length;
+  document.getElementById("statQty").textContent = items.reduce((s,x)=>s+(Number(x.qty)||0),0).toLocaleString();
+  document.getElementById("statValue").textContent = fmtMoney(items.reduce((s,x)=>s+(Number(x.total)||0),0));
+  document.getElementById("statProvinces").textContent = new Set(items.map(x=>x.province)).size;
+
+  const byCat = {};
+  items.forEach(x=>{ const c = x.category||"نامعلومه"; byCat[c]=(byCat[c]||0)+1; });
+  const max = Math.max(1, ...Object.values(byCat));
+  const wrap = document.getElementById("categoryBars");
+  const entries = Object.entries(byCat);
+  wrap.innerHTML = entries.length ? entries.map(([cat,count])=>`
+    <div class="bar-row">
+      <div class="bar-label">${cat}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(count/max)*100}%"></div></div>
+      <div class="bar-count">${count}</div>
+    </div>`).join("") : `<div class="empty-state" style="padding:10px;"><div class="ic">📦</div>لا تر اوسه معلومات نشته</div>`;
+}
+
+/* ---- Item modal (add / edit) ---- */
+let editingId = null;
+const itemFields = ["serial","doc","date","giver","receiver","department","rank","item","category","spec","sn","source","color","qty","unit","price","total","note"];
+
+function openItemModal(item){
+  editingId = item ? item.idd : null;
+  document.getElementById("itemModalTitle").textContent = item ? "جنس سم کړئ" : "نوی جنس اضافه کړه";
+  banner("itemFormBanner","",null);
+  itemFields.forEach(f=>{
+    const el = document.getElementById("f_"+f);
+    if(el) el.value = item ? (item[f]||"") : "";
+  });
+  document.getElementById("f_province").value = profile.role==="admin" ? (item? item.province : "مرکزي اداره") : profile.province;
+  document.getElementById("itemModalOverlay").classList.remove("hidden");
+}
+function closeItemModal(){ document.getElementById("itemModalOverlay").classList.add("hidden"); editingId=null; }
+
+document.getElementById("openAddItemBtn").onclick = ()=> openItemModal(null);
+document.getElementById("closeItemModal").onclick = closeItemModal;
+document.getElementById("cancelItemBtn").onclick = closeItemModal;
+
+function recalcTotal(){
+  const q = Number(document.getElementById("f_qty").value)||0;
+  const p = Number(document.getElementById("f_price").value)||0;
+  document.getElementById("f_total").value = (q*p).toFixed(2);
+}
+document.getElementById("f_qty").addEventListener("input", recalcTotal);
+document.getElementById("f_price").addEventListener("input", recalcTotal);
+
+document.getElementById("itemForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const btn = document.getElementById("saveItemBtn");
+  setBtnLoading(btn, true, "خوندي کړه");
+  try{
+    const payload = {};
+    itemFields.forEach(f=>{ const el=document.getElementById("f_"+f); if(el) payload[f]=el.value; });
+    payload.province = profile.role==="admin" ? document.getElementById("f_province").value : profile.province;
+    payload.updatedAt = serverTimestamp();
+    payload.updatedBy = currentUser.email;
+
+    if(editingId){
+      await updateDoc(doc(db,"items",editingId), payload);
+      toast("جنس بریالیتوب سره سم شو.");
+    }else{
+      payload.createdAt = serverTimestamp();
+      payload.createdBy = currentUser.email;
+      await addDoc(collection(db,"items"), payload);
+      toast("نوی جنس اضافه شو.");
+    }
+    closeItemModal();
+  }catch(err){
+    console.error(err);
+    banner("itemFormBanner","د خوندي کولو پر مهال تېروتنه رامنځته شوه.","error");
+  }finally{
+    setBtnLoading(btn, false, "خوندي کړه");
+  }
+});
+
+window.editItem = (id)=>{
+  const item = allItems.find(x=>x.idd===id);
+  if(item) openItemModal(item);
+};
+
+window.deleteItem = async (id)=>{
+  if(profile.role!=="admin"){ toast("یوازې مرکزي اداره کوونکی کولی شي جنس ړنګ کړي."); return; }
+  if(!confirm("ایا ډاډه یاست چې دا ثبت ړنګ کړئ؟ دا کړنه بیرته نشي کیدای.")) return;
+  try{
+    await deleteDoc(doc(db,"items",id));
+    toast("ثبت ړنګ شو.");
+  }catch(err){
+    console.error(err);
+    toast("د ړنګولو پر مهال تېروتنه رامنځته شوه.");
+  }
+};
+
+/* ============================================================
+   NEWS
+   ============================================================ */
+function listenNews(){
+  const q = query(collection(db,"news"), orderBy("createdAt","desc"));
+  onSnapshot(q, snap=>{
+    allNews = [];
+    snap.forEach(d=>{ const x=d.data(); x.idd=d.id; allNews.push(x); });
+    renderNews();
+  });
+}
+
+function renderNews(){
+  const isAdmin = profile.role==="admin";
+  const list = document.getElementById("newsList");
+  list.innerHTML = allNews.length ? allNews.map(n=>`
+    <div class="news-item">
+      <div>
+        <div class="txt">${n.text}</div>
+        <div class="meta">${n.author||""} · ${n.date||""}</div>
+      </div>
+      ${isAdmin ? `<button class="btn-icon" onclick="window.deleteNews('${n.idd}')">🗑️</button>` : ""}
+    </div>`).join("") : `<div class="empty-state"><div class="ic">📭</div>هیڅ خبر نشته</div>`;
+
+  document.getElementById("dashNews").innerHTML = allNews.slice(0,4).map(n=>`
+    <div class="news-item"><div><div class="txt" style="font-size:13px;">${n.text}</div>
+    <div class="meta">${n.date||""}</div></div></div>`).join("") ||
+    `<div class="empty-state" style="padding:10px;"><div class="ic">📭</div>هیڅ خبر نشته</div>`;
+}
+
+document.getElementById("addNewsBtn").onclick = async ()=>{
+  const txt = document.getElementById("newsInput").value.trim();
+  if(!txt){ toast("لطفاً د خبر متن ولیکئ."); return; }
+  await addDoc(collection(db,"news"), {
+    text: txt,
+    author: profile.displayName || currentUser.email,
+    date: new Date().toLocaleString("fa-AF"),
+    createdAt: serverTimestamp()
+  });
+  document.getElementById("newsInput").value="";
+  toast("خبر خپور شو.");
+};
+
+window.deleteNews = async (id)=>{
+  if(!confirm("دا خبر ړنګ کړئ؟")) return;
+  await deleteDoc(doc(db,"news",id));
+};
+
+/* ============================================================
+   USERS (admin only)
+   ============================================================ */
+function buildProvinceSelect(){
+  const sel = document.getElementById("u_province");
+  sel.innerHTML = PROVINCES.map(p=>`<option>${p}</option>`).join("");
+}
+
+document.getElementById("u_role").addEventListener("change", (e)=>{
+  document.getElementById("u_province_wrap").classList.toggle("hidden", e.target.value==="admin");
+});
+
+function listenUsers(){
+  onSnapshot(collection(db,"users"), snap=>{
+    allUsers = [];
+    snap.forEach(d=>{ const x=d.data(); x.idd=d.id; allUsers.push(x); });
+    renderUsers();
+  });
+}
+
+function renderUsers(){
+  const tbody = document.getElementById("usersTbody");
+  tbody.innerHTML = allUsers.length ? allUsers.map(u=>`
+    <tr>
+      <td>${u.displayName||"—"}</td>
+      <td>${u.email||"—"}</td>
+      <td><span class="badge ${u.role==='admin'?'badge-admin':'badge-province'}">${u.role==='admin'?'مرکزي':'ولایتي'}</span></td>
+      <td>${u.province||"—"}</td>
+      <td><span class="badge ${u.active!==false?'badge-active':'badge-inactive'}">${u.active!==false?'فعال':'غیرفعال'}</span></td>
+      <td><button class="btn-secondary" style="padding:5px 10px;font-size:12px;" onclick="window.toggleUser('${u.idd}', ${u.active===false})">${u.active!==false?'غیرفعاله کړه':'فعاله کړه'}</button></td>
+    </tr>`).join("") : `<tr class="empty-row"><td colspan="6">هیڅ کاروونکی نشته</td></tr>`;
+}
+
+window.toggleUser = async (idd, makeActive)=>{
+  await updateDoc(doc(db,"users",idd), { active: makeActive });
+  toast(makeActive ? "حساب فعال شو." : "حساب غیرفعال شو.");
+};
+
+document.getElementById("openAddUserBtn").onclick = ()=>{
+  document.getElementById("userForm").reset();
+  buildProvinceSelect();
+  document.getElementById("u_province_wrap").classList.remove("hidden");
+  banner("userFormBanner","",null);
+  document.getElementById("userModalOverlay").classList.remove("hidden");
+};
+document.getElementById("closeUserModal").onclick = ()=> document.getElementById("userModalOverlay").classList.add("hidden");
+document.getElementById("cancelUserBtn").onclick = ()=> document.getElementById("userModalOverlay").classList.add("hidden");
+
+document.getElementById("userForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const btn = document.getElementById("saveUserBtn");
+  setBtnLoading(btn, true, "جوړ کړه");
+  banner("userFormBanner","",null);
+
+  const name = document.getElementById("u_name").value.trim();
+  const email = document.getElementById("u_email").value.trim();
+  const pass = document.getElementById("u_pass").value;
+  const role = document.getElementById("u_role").value;
+  const province = role==="admin" ? "" : document.getElementById("u_province").value;
+
+  try{
+    const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
+    await setDoc(doc(db,"users",cred.user.uid), {
+      displayName: name, email, role, province,
+      active: true, createdAt: serverTimestamp(), createdBy: currentUser.email
+    });
+    await signOut(secondaryAuth);
+    toast("نوی کاروونکی جوړ شو.");
+    document.getElementById("userModalOverlay").classList.add("hidden");
+  }catch(err){
+    banner("userFormBanner", friendlyAuthError(err.code), "error");
+  }finally{
+    setBtnLoading(btn, false, "جوړ کړه");
+  }
+});
+
+/* ============================================================
+   SETTINGS — CHANGE PASSWORD
+   ============================================================ */
+document.getElementById("changePwBtn").onclick = async ()=>{
+  const cur = document.getElementById("curPw").value;
+  const n1 = document.getElementById("newPw").value;
+  const n2 = document.getElementById("newPw2").value;
+  banner("pwBanner","",null);
+
+  if(n1.length<6){ banner("pwBanner","نوی پټ نوم باید لږترلږه ۶ توري ولري.","error"); return; }
+  if(n1!==n2){ banner("pwBanner","نوی پټ نوم سره سمون نه خوري.","error"); return; }
+
+  const btn = document.getElementById("changePwBtn");
+  setBtnLoading(btn, true, "پټ نوم خوندي کړه");
+  try{
+    const cred = EmailAuthProvider.credential(currentUser.email, cur);
+    await reauthenticateWithCredential(currentUser, cred);
+    await updatePassword(currentUser, n1);
+    banner("pwBanner","پټ نوم بریالیتوب سره بدل شو.","success");
+    document.getElementById("curPw").value = document.getElementById("newPw").value = document.getElementById("newPw2").value = "";
+  }catch(err){
+    banner("pwBanner", friendlyAuthError(err.code), "error");
+  }finally{
+    setBtnLoading(btn, false, "پټ نوم خوندي کړه");
+  }
+};
+
+</script>
+</body>
+</html>
